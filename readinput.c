@@ -2,7 +2,6 @@
 #include "readinput.h"
 #include "gff3vis.h"
 #include "core/str_api.h"
-//#include "core/fa_api.h"
 #include "core/io_api.h"
 #include "core/tokenizer_api.h"
 //#define DEBUG

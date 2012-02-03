@@ -45,14 +45,14 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
                                            GtFeatureNode *fn,
                                             GtError *err)
 {
-  GtFeatureNodeIterator *fni, *fni_childs;
-  GtFeatureNode *node, *child;
+  GtFeatureNodeIterator *fni;
+  GtFeatureNode *node;
   GtGff3Vis *v;
   int had_err = 0;
   GtSplitter *vcf_split;
   GtStr *line, *tokenline;
   GtStrArray *vcf_arr;
-  GT_UNUSED MutScan *mutscan;  
+  MutScan *mut;  
   unsigned long pos = 0;
   unsigned long i;
   gt_error_check(err);
@@ -63,6 +63,8 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
     return 0;
     
   fni = gt_feature_node_iterator_new(fn);
+  vcf_arr = gt_str_array_new();
+  mut = mutscan_new();
   vcf_split = gt_splitter_new();
   line = gt_str_new();
   tokenline = gt_tokenizer_get_token(v->vcf_token);
@@ -90,17 +92,6 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
                 rng.end,
                 gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));
       
-        fni_childs =  gt_feature_node_iterator_new_direct(node);      
-        while ((child = gt_feature_node_iterator_next(fni_childs))) {
-          //~ GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
-          //~ printf("CHILD: type: %s, %lu-%lu, seqid %s\n",
-                //~ gt_feature_node_get_type(child),
-                //~ rng_child.start,
-                //~ rng_child.end,
-                //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)));        
-        }        
-        gt_feature_node_iterator_delete(fni_childs);
-
         gt_tokenizer_next_token(v->vcf_token);
         if (!gt_tokenizer_has_token(v->vcf_token))
           break;
@@ -112,14 +103,17 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
         gt_splitter_split(vcf_split, gt_str_get(line),
                           gt_str_length(line), '\t');
         GT_SNPANNO_CHECK_FILE_FORMAT;
-        /* put VCF entries into gt_str_array object and pass them to MutScan object */
+        /* put VCF entries into gt_str_array object */
         /* VCF entry: CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO */
+        gt_str_array_reset(vcf_arr);
         vcf_arr = gt_str_array_new();
         for(i=0;i<gt_splitter_size(vcf_split);i++) {
           gt_str_array_add_cstr(vcf_arr,gt_splitter_get_token(vcf_split, i));
         }
+        /* pass VCF entries and FeatureNode containing child nodes to MutScan object */
+        vcf_arr = mutscan_frms(mut, vcf_arr, node);
         
-        
+        mutscan_reset(mut);
         
       } else {        
         //~ printf("SNP not in gene at Pos: %lu\t",pos);
@@ -141,6 +135,7 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   }
   gt_feature_node_iterator_delete(fni);
   gt_str_delete(line);
+  gt_str_array_delete(vcf_arr);
   gt_splitter_delete(vcf_split);
   return had_err;
 }
