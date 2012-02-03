@@ -13,7 +13,6 @@ int read_input(const char * gff_file, const char *vcf_file_input, const char *fa
   gt_lib_init(); /* we use the libgenometools.so */
   GtIO *vcf_io;
   GtTokenizer *vcf_token;
-  
   GtStr *fas_file;
   GtError *err; 
   

@@ -9,7 +9,11 @@
 #include "extended/feature_node_iterator_api.h"
 #include "extended/node_visitor_api.h"
 #include "core/splitter_api.h"
+#include "core/str_array_api.h"
 #include "gff3vis.h"
+#include "mutscan.h"
+
+
 /*
 #include "vcfentry.h"
 #include "mutscan.h"
@@ -47,7 +51,10 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   int had_err = 0;
   GtSplitter *vcf_split;
   GtStr *line, *tokenline;
+  GtStrArray *vcf_arr;
+  GT_UNUSED MutScan *mutscan;  
   unsigned long pos = 0;
+  unsigned long i;
   gt_error_check(err);
   v = gt_gff3_vis_cast(nv);
 
@@ -105,6 +112,14 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
         gt_splitter_split(vcf_split, gt_str_get(line),
                           gt_str_length(line), '\t');
         GT_SNPANNO_CHECK_FILE_FORMAT;
+        /* put VCF entries into gt_str_array object and pass them to MutScan object */
+        /* VCF entry: CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO */
+        vcf_arr = gt_str_array_new();
+        for(i=0;i<gt_splitter_size(vcf_split);i++) {
+          gt_str_array_add_cstr(vcf_arr,gt_splitter_get_token(vcf_split, i));
+        }
+        
+        
         
       } else {        
         //~ printf("SNP not in gene at Pos: %lu\t",pos);
