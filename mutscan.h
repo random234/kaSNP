@@ -10,7 +10,7 @@ GtStrArray* mutscan_frms(MutScan *, GtStrArray *, GtFeatureNode *);
 
 GtStrArray* mutscan_miss(MutScan *mut);
 
-GtStrArray* mutscan_nons(MutScan *mut);
+GtStrArray* mutscan_splice(MutScan *mut);
 
 void mutscan_reset(MutScan *mut);
 
