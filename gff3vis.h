@@ -14,7 +14,7 @@ typedef struct GtGff3Vis GtGff3Vis;
 //GtNodeVisitor*            gt_my_feature_visitor_new(void);
 
 const GtNodeVisitorClass* gt_gff3_vis_class(void);
-GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *fas_file);
+GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *fas_file, unsigned long splice_site_range);
 
 
 #endif

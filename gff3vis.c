@@ -26,6 +26,7 @@ struct GtGff3Vis {
   const GtNodeVisitor parent_instance;
   GtTokenizer *vcf_token;
   GtStr *fas_file;
+  unsigned long splice_site_range;
   //GtStrArray *sa;
 };
 
@@ -168,7 +169,7 @@ const GtNodeVisitorClass* gt_gff3_vis_class()
   return nvc;
 }
 
-GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *fas_file)
+GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *fas_file, unsigned long splice_site_range)
 {
   GtGff3Vis *mfv;
   GtNodeVisitor *nv;
@@ -177,6 +178,7 @@ GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *fas_file)
   //mfv->sa = gt_str_array_new();
   mfv->vcf_token = vcf_token;
   mfv->fas_file = fas_file;  
+  mfv->splice_site_range = splice_site_range;
   return nv;
 }
 

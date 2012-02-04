@@ -12,7 +12,7 @@
 struct MutScan {
   GtStrArray *vcf_arr;
   GtFeatureNode *node, *child;
-  
+  unsigned long splice_site_interval;
 };
 
 MutScan* mutscan_new(void) {
@@ -40,18 +40,20 @@ GtStrArray* mutscan_frms(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
   return vcf;
 }
 
-GtStrArray* mutscan_miss(MutScan *mut){
+/* This function checks for nonsense & missense mutations */
+GtStrArray* mutscan_miss(GT_UNUSED MutScan *mut){
   GtStrArray *res_arr;
   res_arr = gt_str_array_new();
     
-  return res_arr
+  return res_arr;
 }
 
-GtStrArray* mutscan_splice(MutScan *mut){
+/* This function checks for mutations near splice sites */
+GtStrArray* mutscan_splice(GT_UNUSED MutScan *mut){
   GtStrArray *res_arr;
   res_arr = gt_str_array_new();
     
-  return res_arr
+  return res_arr;
 }
 
 

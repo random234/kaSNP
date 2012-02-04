@@ -6,7 +6,7 @@
 #include "core/tokenizer_api.h"
 //#define DEBUG
 
-int read_input(const char * gff_file, const char *vcf_file_input, const char *fas_file_input) {
+int read_input(const char * gff_file, const char *vcf_file_input, const char *fas_file_input, unsigned long splice_site_range) {
   GtNodeStream *in_stream, *visitor_stream;
   GtNodeVisitor *gff3vis;
   gt_lib_init(); /* we use the libgenometools.so */
@@ -29,7 +29,7 @@ int read_input(const char * gff_file, const char *vcf_file_input, const char *fa
   gt_tokenizer_skip_comment_lines(vcf_token); /* we skip the comment lines of the vcf file */
     
   
-  gff3vis = gt_gff3_feat_vis_new(vcf_token, fas_file);
+  gff3vis = gt_gff3_feat_vis_new(vcf_token, fas_file, splice_site_range);
   in_stream = gt_gff3_in_stream_new_sorted(gff_file);
   gt_assert(in_stream);
   
