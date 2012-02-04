@@ -37,9 +37,24 @@ GtStrArray* mutscan_frms(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
       rng_child.end,
       gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) mut->child)));        
   }       
-  
   return vcf;
 }
+
+GtStrArray* mutscan_miss(MutScan *mut){
+  GtStrArray *res_arr;
+  res_arr = gt_str_array_new();
+    
+  return res_arr
+}
+
+GtStrArray* mutscan_splice(MutScan *mut){
+  GtStrArray *res_arr;
+  res_arr = gt_str_array_new();
+    
+  return res_arr
+}
+
+
 
 
 void mutscan_reset(MutScan *mut) {
