@@ -11,7 +11,9 @@
 
 struct MutScan {
   GtStrArray *vcf_arr;
-  GtFeatureNode *node, *child;
+  //~ GtFeatureNode *node, *child;
+  
+  
   unsigned long splice_site_interval;
 };
 
@@ -21,23 +23,39 @@ MutScan* mutscan_new(void) {
   return mut;
 }
 
-GtStrArray* mutscan_frms(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
+unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
   mut->vcf_arr = vcf;
-  mut->node = fn;
-  
+  GtFeatureNode *node, *child;    
   GtFeatureNodeIterator *fni;
-  fni = gt_feature_node_iterator_new(mut->node);  
+  GtFeatureNodeIterator *fni_child;
   
-  fni =  gt_feature_node_iterator_new_direct(mut->node);      
-  while ((mut->child = gt_feature_node_iterator_next(fni))) {
-    GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) mut->child);
+  fni =  gt_feature_node_iterator_new_direct(fn);      
+  while ((node = gt_feature_node_iterator_next(fni))) {
+    GtRange rng_node = gt_genome_node_get_range((GtGenomeNode*) node);
     printf("CHILD: type: %s, %lu-%lu, seqid %s\n",
-      gt_feature_node_get_type(mut->child),
-      rng_child.start,
-      rng_child.end,
-      gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) mut->child)));        
-  }       
-  return vcf;
+      gt_feature_node_get_type(node),
+      rng_node.start,
+      rng_node.end,
+      gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));        
+      fni_child = gt_feature_node_iterator_new(node);
+      while ((child = gt_feature_node_iterator_next(fni_child))) {
+        GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
+        printf("CHILD: type: %s, %lu-%lu, seqid %s\n",
+          gt_feature_node_get_type(child),
+          rng_child.start,
+          rng_child.end,
+          gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)));    
+      }
+  }
+  return 0;
+}
+
+
+GtStrArray* mutscan_frms(GT_UNUSED MutScan *mut) {
+  GtStrArray *res_arr;
+  res_arr = gt_str_array_new();
+    
+  return res_arr;
 }
 
 /* This function checks for nonsense & missense mutations */
@@ -56,13 +74,21 @@ GtStrArray* mutscan_splice(GT_UNUSED MutScan *mut){
   return res_arr;
 }
 
-
+GtStrArray* mutscan_intron(GT_UNUSED MutScan *mut){
+  GtStrArray *res_arr;
+  res_arr = gt_str_array_new();
+  
+  
+  
+  
+  return res_arr;
+}
 
 
 void mutscan_reset(MutScan *mut) {
   gt_assert(mut);
   gt_str_array_reset(mut->vcf_arr);
-  gt_genome_node_delete((GtGenomeNode*)mut->node);
+  //~ gt_genome_node_delete((GtGenomeNode*)mut->node);
 }
 
 void mutscan_delete(MutScan *mut) {

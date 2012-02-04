@@ -112,7 +112,8 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
           gt_str_array_add_cstr(vcf_arr,gt_splitter_get_token(vcf_split, i));
         }
         /* pass VCF entries and FeatureNode containing child nodes to MutScan object */
-        vcf_arr = mutscan_frms(mut, vcf_arr, node);
+        if(!mutscan_init(mut, vcf_arr, node))
+          break;
         
         mutscan_reset(mut);
         
