@@ -16,13 +16,23 @@ struct MutGene {
   GtStr *type;
   GtRange *rng;
   unsigned long phase;
-  GtArray *gene_features;
+  GtArray *children;
 };
 
 
 MutGene* mutgene_new(void) {
-  MutGene *gene = gt_malloc(sizeof (MutGene));  
+  MutGene *gene = gt_malloc(sizeof (MutGene));
   return gene;
+}
+
+void mutgene_add_content(MutGene *gene, GtStr *type, GtRange *rng, unsigned long phase) {
+  gene->type = type;
+  gene->rng = rng;
+  gene->phase = phase;  
+}
+
+void mutgene_add_child(MutGene *gene, MutGene *child) {
+  gt_array_add(gene->children , child);
 }
 
 void mutgene_reset(MutGene *gene) {
