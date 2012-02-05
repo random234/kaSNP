@@ -18,8 +18,8 @@ GT_LDFLAGS:=-L$(prefix)/lib \
 
 all: kasnp
 
-kasnp: kasnp.o readinput.o gff3vis.o mutscan.o
-	$(LD) $(LDFLAGS) $(GT_LDFLAGS) $< -lm -lgenometools -lcairo -o $@ readinput.o gff3vis.o mutscan.o
+kasnp: kasnp.o readinput.o gff3vis.o mutscan.o mutgene.o
+	$(LD) $(LDFLAGS) $(GT_LDFLAGS) $< -lm -lgenometools -lcairo -o $@ readinput.o gff3vis.o mutscan.o mutgene.o
 
 #%.o: %.c
 #  gcc -Wall -g -c $<

@@ -7,15 +7,19 @@
 #include "core/unused_api.h"
 #include "core/assert_api.h"
 #include "core/cstr_api.h"
+#include "core/phase_api.h"
 #include "mutscan.h"
+#include "mutgene.h"
 
 struct MutScan {
   GtStrArray *vcf_arr;
+  MutGene *mut_gene;  
   //~ GtFeatureNode *node, *child;
-  
-  
   unsigned long splice_site_interval;
 };
+
+#define GT_PHASE_CHARS \
+        "012."
 
 MutScan* mutscan_new(void) {
   MutScan *mut = gt_malloc(sizeof (MutScan));
@@ -28,23 +32,29 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
   GtFeatureNode *node, *child;    
   GtFeatureNodeIterator *fni;
   GtFeatureNodeIterator *fni_child;
+  mut->mut_gene = mutgene_new();
   
-  fni =  gt_feature_node_iterator_new_direct(fn);      
+  
+  /* get all mRNA entries in current gene */
+  fni =  gt_feature_node_iterator_new_direct(fn);
   while ((node = gt_feature_node_iterator_next(fni))) {
     GtRange rng_node = gt_genome_node_get_range((GtGenomeNode*) node);
-    printf("CHILD: type: %s, %lu-%lu, seqid %s\n",
+    printf("MRNACHILD: type: %s, %lu-%lu, seqid %s\n",
       gt_feature_node_get_type(node),
       rng_node.start,
       rng_node.end,
       gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));        
-      fni_child = gt_feature_node_iterator_new(node);
+    
+      //~ /* get all exon & CDS entries in current gene */
+      fni_child = gt_feature_node_iterator_new_direct(node);      
       while ((child = gt_feature_node_iterator_next(fni_child))) {
         GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
-        printf("CHILD: type: %s, %lu-%lu, seqid %s\n",
+        printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
           gt_feature_node_get_type(child),
           rng_child.start,
           rng_child.end,
-          gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)));    
+          gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)),
+          gt_feature_node_get_phase(child));    
       }
   }
   return 0;
