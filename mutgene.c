@@ -14,26 +14,91 @@
 
 struct MutGene {  
   GtStr *type;
-  GtRange *rng;
+  unsigned long rng_start;
+  unsigned long rng_end;
   unsigned long phase;
-  GtArray *children;
+  /* may not be needed as we could also get the array size from GtArray */
+  unsigned long child_size;
+  GtArray *children;  
 };
 
 
 MutGene* mutgene_new(void) {
-  MutGene *gene = gt_malloc(sizeof (MutGene));
-  return gene;
+  MutGene *g = gt_malloc(sizeof *g);
+  g->rng_start = 0;
+  g->rng_end = 0;
+  g->phase = 0;
+ // g->children = gt_array_new(sizeof (*g));
+  g->child_size = 0;
+  return g;
 }
 
-void mutgene_add_content(MutGene *gene, GtStr *type, GtRange *rng, unsigned long phase) {
-  gene->type = type;
-  gene->rng = rng;
-  gene->phase = phase;  
+GtStr* mutgene_get_type(MutGene *g) {
+  gt_assert(g);
+  return g->type;  
 }
 
-void mutgene_add_child(MutGene *gene, MutGene *child) {
-  gt_array_add(gene->children , child);
+void mutgene_set_type(MutGene *g, GtStr *t) {
+  gt_assert(g);
+  g->type = t;  
 }
+
+unsigned long mutgene_get_rng_start(MutGene *g) {
+  gt_assert(g);
+  return g->rng_start;  
+}
+
+void mutgene_set_rng_start(MutGene *g, unsigned long rs) {
+  gt_assert(g);
+  g->rng_start = rs;  
+}
+
+unsigned long mutgene_get_rng_end(MutGene *g) {
+  gt_assert(g);
+  return g->rng_end;  
+}
+
+
+void mutgene_set_rng_end(MutGene *g, unsigned long re) {
+  gt_assert(g);
+  g->rng_end = re;  
+}
+
+unsigned long mutgene_get_phase(MutGene *g) {
+  gt_assert(g);
+  return g->phase;  
+}
+
+void mutgene_set_phase(MutGene *g, unsigned long p) {
+  gt_assert(g);
+  g->phase = p;  
+}
+
+unsigned long mutgene_get_child_size(MutGene *g) {
+  gt_assert(g);
+  return g->child_size;  
+}
+
+void mutgene_set_child_size(MutGene *g, unsigned long s) {
+  gt_assert(g);
+  g->phase = s;  
+}
+
+
+void mutgene_add_child(MutGene *g, MutGene *child) {
+  g->children = gt_array_new(sizeof (child));
+  gt_array_add(g->children, child);
+  g->child_size++;
+  //~ printf("%lu",g->child_size);
+}
+
+void mutgene_add_content(MutGene *g, GtStr *t, unsigned long rs, unsigned long re, unsigned long p) {
+  mutgene_set_type(g,t);
+  mutgene_set_rng_start(g,rs);
+  mutgene_set_rng_end(g,re);
+  mutgene_set_phase(g,p);  
+}
+
 
 void mutgene_reset(MutGene *gene) {
   gt_assert(gene);  

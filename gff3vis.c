@@ -84,14 +84,14 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
       if(strcmp(gt_feature_node_get_type(node), "gene") == 0 && rng.start <= pos && rng.end >= pos && 
         (strcmp(gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)),gt_splitter_get_token(vcf_split,0)) == 0)){
 
-        printf("SNP in gene found at Pos: %lu\t",pos);
-        printf("rng.end: %lu \n",rng.end);
+        //~ printf("SNP in gene found at Pos: %lu\t",pos);
+        //~ printf("rng.end: %lu \n",rng.end);
           
-        printf("type: %s, %lu-%lu, seqid %s\n\n",
-                gt_feature_node_get_type(node),
-                rng.start,
-                rng.end,
-                gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));
+        //~ printf("type: %s, %lu-%lu, seqid %s\n\n",
+                //~ gt_feature_node_get_type(node),
+                //~ rng.start,
+                //~ rng.end,
+                //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));
       
         gt_tokenizer_next_token(v->vcf_token);
         if (!gt_tokenizer_has_token(v->vcf_token))
@@ -112,8 +112,10 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
           gt_str_array_add_cstr(vcf_arr,gt_splitter_get_token(vcf_split, i));
         }
         /* pass VCF entries and FeatureNode containing child nodes to MutScan object */
-        if(!mutscan_init(mut, vcf_arr, node))
-          break;
+        //~ if(!mutscan_init(mut, vcf_arr, node))
+          //~ break;
+        mutscan_init(mut, vcf_arr, node);
+        mutscan_start_scan(mut);
         
         mutscan_reset(mut);
         
