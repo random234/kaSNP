@@ -25,9 +25,11 @@ unsigned long mutgene_get_child_size(MutGene*);
 
 void mutgene_set_child_size(MutGene*, unsigned long);
 
-void mutgene_add_content(MutGene*,GtStr*, unsigned long, unsigned long, unsigned long);
+GtArray* mutgene_get_children_array(MutGene *);
 
 void mutgene_add_child(MutGene*, MutGene*);
+
+void mutgene_add_content(MutGene*,GtStr*, unsigned long, unsigned long, unsigned long);
 
 void mutgene_reset(MutGene*);
 

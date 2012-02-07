@@ -84,11 +84,11 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
     /* add new child elem to parent object */    
     mutgene_add_child(mut->mut_gene,mut_child_elem);
         
-    //~ printf("MRNACHILD: type: %s, %lu-%lu, seqid %s\n",
-      //~ gt_feature_node_get_type(node),
-      //~ rng_node.start,
-      //~ rng_node.end,
-      //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));        
+    printf("MRNACHILD: type: %s, %lu-%lu, seqid %s\n",
+      gt_feature_node_get_type(node),
+      rng_node.start,
+      rng_node.end,
+      gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));        
     
       //~ /* get all exon & CDS entries in current gene */
       fni_child = gt_feature_node_iterator_new_direct(node);      
@@ -103,13 +103,16 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
         /* add new child elem to parent object */    
         mutgene_add_child(mut_child_elem,mut_child_of_child_elem);
         
-        //~ printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
-          //~ gt_feature_node_get_type(child),
-          //~ rng_child.start,
-          //~ rng_child.end,
-          //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)),
-          //~ gt_feature_node_get_phase(child));    
+        printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
+          gt_feature_node_get_type(child),
+          rng_child.start,
+          rng_child.end,
+          gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)),
+          gt_feature_node_get_phase(child));    
+        
+        //~ mutgene_delete(mut_child_of_child_elem);
       }
+      //~ mutgene_delete(mut_child_elem);
   }
   
   return 0;
@@ -149,20 +152,34 @@ GtStrArray* mutscan_splice(GT_UNUSED MutScan *m){
 }
 
 unsigned long mutscan_intron(MutScan *m){
-  unsigned long i = 0;
+  unsigned long i,j = 0;
   unsigned long var_pos = strtol(gt_str_array_get(mutscan_get_vcf_array(m),1),NULL,0);
+  unsigned long ret_val;
   
-  for(i = 0;i <= mutgene_get_child_size(mutscan_get_mut_gene(m));i++) {
+  for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
+    printf("------------------------------------------------\n");
+    printf("%lu\n", i);
+    printf("%s \n",gt_str_get(mutgene_get_type(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i))));
+    printf("%lu \n",mutgene_get_rng_start(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));
+    printf("%lu \n",mutgene_get_rng_end(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));
+    printf("%lu \n",mutgene_get_phase(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));
     
-    
-    
-    
-    //~ for(i = 0;i <= mutgene_get_child_size(mutscan_get_mut_gene(m);i++) {
-      //~ printf("BLAA\n");    
-    //~ }
-    printf("LALA\n");
+    for(j=0;j<gt_array_size(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));j++){
+      printf("%s \n",gt_str_get(mutgene_get_type(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j))));
+      printf("%lu \n",mutgene_get_rng_start(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)));
+      printf("%lu \n",mutgene_get_rng_end(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)));
+      printf("%lu \n",mutgene_get_phase(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)));
+      
+      if(var_pos >= mutgene_get_rng_start(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)) && var_pos <= mutgene_get_rng_end(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j))) {
+        ret_val = 1;
+      }
+      
+    }
   }  
-  return var_pos;
+  if(!(ret_val == 1)) {
+    printf("###################### We have a intron mutation at POS: %lu ###############################\n", var_pos);
+  }
+  return ret_val;
 }
 
 

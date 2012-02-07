@@ -28,7 +28,7 @@ MutGene* mutgene_new(void) {
   g->rng_start = 0;
   g->rng_end = 0;
   g->phase = 0;
- // g->children = gt_array_new(sizeof (*g));
+  g->children = gt_array_new(sizeof (MutGene));
   g->child_size = 0;
   return g;
 }
@@ -84,10 +84,14 @@ void mutgene_set_child_size(MutGene *g, unsigned long s) {
   g->phase = s;  
 }
 
+GtArray* mutgene_get_children_array(MutGene *g) {
+  gt_assert(g);
+  return g->children;  
+}
 
 void mutgene_add_child(MutGene *g, MutGene *child) {
-  g->children = gt_array_new(sizeof (child));
-  gt_array_add(g->children, child);
+  //g->children = gt_array_new(sizeof (child));
+  gt_array_add_elem(g->children, child, sizeof(MutGene));
   g->child_size++;
   //~ printf("%lu",g->child_size);
 }
@@ -100,10 +104,10 @@ void mutgene_add_content(MutGene *g, GtStr *t, unsigned long rs, unsigned long r
 }
 
 
-void mutgene_reset(MutGene *gene) {
-  gt_assert(gene);  
+void mutgene_reset(MutGene *g) {
+  gt_assert(g);  
 }
 
-void mutgene_delete(MutGene *gene) {
-  gt_free(gene);  
+void mutgene_delete(MutGene *g) {
+  gt_free(g);  
 }
