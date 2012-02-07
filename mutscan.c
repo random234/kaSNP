@@ -217,7 +217,7 @@ GtStrArray* mutscan_exon(MutScan *m){
     
       if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {
         gt_str_append_str(res_str, mutgene_get_gene_name(mutscan_get_mut_gene(m)));
-        
+         
         
         gt_str_array_add(res_arr, res_str);
       } 
