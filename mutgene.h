@@ -5,6 +5,14 @@ typedef struct MutGene MutGene;
 
 MutGene* mutgene_new(void);
 
+GtStr* mutgene_get_id(MutGene *);
+
+void mutgene_set_id(MutGene *, GtStr *);
+
+GtStr* mutgene_get_gene_name(MutGene *);
+
+void mutgene_set_gene_name(MutGene *, GtStr *);
+
 GtStr* mutgene_get_type(MutGene *);
 
 void mutgene_set_type(MutGene *, GtStr *);
