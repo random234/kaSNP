@@ -130,9 +130,9 @@ unsigned long mutscan_start_scan(MutScan *m) {
   printf("\n");
   
   /* check for mutations in frames */
-  GtStrArray *frame_res = mutscan_frame(m);
+  //~ GtStrArray *frame_res = mutscan_frame(m);
   for(i=0;i<gt_str_array_size(intron_res);i++) {
-    printf("%s \t",gt_str_array_get(frame_res, i));
+    //~ printf("%s \t",gt_str_array_get(frame_res, i));
   }
   printf("\n");
   return 0;
