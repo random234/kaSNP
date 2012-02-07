@@ -35,7 +35,7 @@ GtStrArray* mutscan_splice(MutScan *mut);
 /* 5' UTR 2000bp Upstream detection 3' 500bp downstream detection */
 
 /* intron mutation detection */
-unsigned long mutscan_intron(MutScan *mut);
+GtStrArray* mutscan_intron(MutScan *mut);
 
 
 
