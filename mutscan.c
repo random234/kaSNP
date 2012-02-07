@@ -156,28 +156,36 @@ unsigned long mutscan_intron(MutScan *m){
   unsigned long var_pos = strtol(gt_str_array_get(mutscan_get_vcf_array(m),1),NULL,0);
   unsigned long ret_val;
   
+  GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
   for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
+    MutGene *mrna_elem = gt_array_get(mrna_arr, i);
+    
     printf("------------------------------------------------\n");
     printf("%lu\n", i);
-    printf("%s \n",gt_str_get(mutgene_get_type(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i))));
-    printf("%lu \n",mutgene_get_rng_start(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));
-    printf("%lu \n",mutgene_get_rng_end(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));
-    printf("%lu \n",mutgene_get_phase(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));
+    printf("%s \n",gt_str_get(mutgene_get_type(mrna_elem)));
+    printf("%lu \n",mutgene_get_rng_start(mrna_elem));
+    printf("%lu \n",mutgene_get_rng_end(mrna_elem));
+    printf("%lu \n",mutgene_get_phase(mrna_elem));
     
-    for(j=0;j<gt_array_size(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)));j++){
-      printf("%s \n",gt_str_get(mutgene_get_type(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j))));
-      printf("%lu \n",mutgene_get_rng_start(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)));
-      printf("%lu \n",mutgene_get_rng_end(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)));
-      printf("%lu \n",mutgene_get_phase(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)));
-      
-      if(var_pos >= mutgene_get_rng_start(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j)) && var_pos <= mutgene_get_rng_end(gt_array_get(mutgene_get_children_array(gt_array_get(mutgene_get_children_array(mutscan_get_mut_gene(m)), i)),j))) {
-        ret_val = 1;
+    GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
+    for(j=0;j<gt_array_size(mrna_child_arr);j++){
+      MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
+      printf("%s \n",gt_str_get(mutgene_get_type(mrna_child_elem)));
+      printf("%lu \n",mutgene_get_rng_start(mrna_child_elem));
+      printf("%lu \n",mutgene_get_rng_end(mrna_child_elem));
+      printf("%lu \n",mutgene_get_phase(mrna_child_elem));
+    
+      if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {
+        ret_val = 1;      
       }
-      
+      mrna_child_elem = NULL;
     }
+    mrna_elem = NULL;
   }  
-  if(!(ret_val == 1)) {
+  if(ret_val == 0) {
     printf("###################### We have a intron mutation at POS: %lu ###############################\n", var_pos);
+  } else {
+    printf("$$$$$$$$$$$$$$$$$$$$$$ We have no intron mutation at POS: %lu \n", var_pos);
   }
   return ret_val;
 }
