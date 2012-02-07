@@ -24,7 +24,7 @@ unsigned long mutscan_init(MutScan *, GtStrArray *, GtFeatureNode *);
 unsigned long mutscan_start_scan(MutScan *);
 
 /* frame shift detection */
-GtStrArray* mutscan_frms(MutScan *);
+GtStrArray* mutscan_frame(MutScan *);
 
 /* missense nonsense mutation detection */
 GtStrArray* mutscan_miss(MutScan *mut);
@@ -35,7 +35,7 @@ GtStrArray* mutscan_splice(MutScan *mut);
 /* 5' UTR 2000bp Upstream detection 3' 500bp downstream detection */
 
 /* intron mutation detection */
-GtStrArray* mutscan_intron(MutScan *mut);
+GtStrArray* mutscan_exon(MutScan *mut);
 
 
 
