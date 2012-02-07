@@ -13,7 +13,9 @@
 
 
 struct MutGene {  
-  GtStr *type;
+  GtStr *id;
+  GtStr *gene_name;
+  GtStr *type;  
   unsigned long rng_start;
   unsigned long rng_end;
   unsigned long phase;
@@ -31,6 +33,26 @@ MutGene* mutgene_new(void) {
   g->children = gt_array_new(sizeof (MutGene));
   g->child_size = 0;
   return g;
+}
+
+GtStr* mutgene_get_id(MutGene *g) {
+  gt_assert(g);
+  return g->id;  
+}
+
+void mutgene_set_id(MutGene *g, GtStr *i) {
+  gt_assert(g);
+  g->type = i;  
+}
+
+GtStr* mutgene_get_gene_name(MutGene *g) {
+  gt_assert(g);
+  return g->gene_name;  
+}
+
+void mutgene_set_gene_name(MutGene *g, GtStr *gn) {
+  gt_assert(g);
+  g->gene_name = gn;  
 }
 
 GtStr* mutgene_get_type(MutGene *g) {
@@ -96,7 +118,9 @@ void mutgene_add_child(MutGene *g, MutGene *child) {
   //~ printf("%lu",g->child_size);
 }
 
-void mutgene_add_content(MutGene *g, GtStr *t, unsigned long rs, unsigned long re, unsigned long p) {
+void mutgene_add_content(MutGene *g, GtStr *i, GtStr *gn, GtStr *t, unsigned long rs, unsigned long re, unsigned long p) {
+  mutgene_set_id(g,i);
+  mutgene_set_gene_name(g,gn);
   mutgene_set_type(g,t);
   mutgene_set_rng_start(g,rs);
   mutgene_set_rng_end(g,re);

@@ -29,7 +29,7 @@ GtArray* mutgene_get_children_array(MutGene *);
 
 void mutgene_add_child(MutGene*, MutGene*);
 
-void mutgene_add_content(MutGene*,GtStr*, unsigned long, unsigned long, unsigned long);
+void mutgene_add_content(MutGene*,GtStr*, GtStr*, GtStr*, unsigned long, unsigned long, unsigned long);
 
 void mutgene_reset(MutGene*);
 

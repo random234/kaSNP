@@ -70,7 +70,8 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
   GtFeatureNodeIterator *fni_child;
   
   GtRange rng_fn = gt_genome_node_get_range((GtGenomeNode*) fn);
-  mutgene_add_content(mut->mut_gene, gt_str_new_cstr(gt_feature_node_get_type(fn)),rng_fn.start,rng_fn.end, gt_feature_node_get_phase(fn));
+  
+  mutgene_add_content(mut->mut_gene, gt_str_new_cstr(gt_feature_node_get_attribute(fn,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(fn,"Name")) ,gt_str_new_cstr(gt_feature_node_get_type(fn)),rng_fn.start,rng_fn.end, gt_feature_node_get_phase(fn));
     
   /* get all mRNA entries in current gene */
   fni =  gt_feature_node_iterator_new_direct(fn);
@@ -80,7 +81,7 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
     /* create new child elem from current node */
     MutGene *mut_child_elem;
     mut_child_elem = mutgene_new();
-    mutgene_add_content(mut_child_elem, gt_str_new_cstr(gt_feature_node_get_type(node)),rng_node.start,rng_node.end, gt_feature_node_get_phase(node));
+    mutgene_add_content(mut_child_elem, gt_str_new_cstr(gt_feature_node_get_attribute(node,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(node,"Name")) , gt_str_new_cstr(gt_feature_node_get_type(node)),rng_node.start,rng_node.end, gt_feature_node_get_phase(node));
     
     /* add new child elem to parent object */    
     mutgene_add_child(mut->mut_gene,mut_child_elem);
@@ -99,7 +100,7 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
         /* create new child elem for children of current node */        
         MutGene *mut_child_of_child_elem;
         mut_child_of_child_elem = mutgene_new();
-        mutgene_add_content(mut_child_of_child_elem, gt_str_new_cstr(gt_feature_node_get_type(child)),rng_child.start,rng_child.end, gt_feature_node_get_phase(child));
+        mutgene_add_content(mut_child_of_child_elem, gt_str_new_cstr(gt_feature_node_get_attribute(child,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(child,"Name")), gt_str_new_cstr(gt_feature_node_get_type(child)),rng_child.start,rng_child.end, gt_feature_node_get_phase(child));
 
         /* add new child elem to parent object */    
         mutgene_add_child(mut_child_elem,mut_child_of_child_elem);
@@ -131,10 +132,10 @@ unsigned long mutscan_start_scan(MutScan *m) {
   printf("\n");
   
   /* check for mutations in frames */
-  GtStrArray *frame_res = mutscan_frame(m, exon_res);
-  for(i=0;i<gt_str_array_size(frame_res);i++) {
-    printf("%s \t",gt_str_array_get(frame_res, i));
-  }
+  //~ GtStrArray *frame_res = mutscan_frame(m, exon_res);
+  //~ for(i=0;i<gt_str_array_size(frame_res);i++) {
+    //~ printf("%s \t",gt_str_array_get(frame_res, i));
+  //~ }
   printf("\n");
   return 0;
 }
