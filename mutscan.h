@@ -24,7 +24,7 @@ unsigned long mutscan_init(MutScan *, GtStrArray *, GtFeatureNode *);
 unsigned long mutscan_start_scan(MutScan *);
 
 /* frame shift detection */
-GtStrArray* mutscan_frame(MutScan *);
+GtStrArray* mutscan_frame(MutScan *, GtStrArray*);
 
 /* missense nonsense mutation detection */
 GtStrArray* mutscan_miss(MutScan *mut);
