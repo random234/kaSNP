@@ -1,6 +1,7 @@
 #ifndef MUTSCAN_H
 #define MUTSCAN_H
 #include "mutgene.h"
+#include "resultset.h"
 
 typedef struct MutScan MutScan;
 
@@ -21,22 +22,22 @@ void mutscan_set_splice_site_interval(MutScan *, unsigned long);
 
 unsigned long mutscan_init(MutScan *, GtStrArray *, GtFeatureNode *);
 
-unsigned long mutscan_start_scan(MutScan *);
+ResultSet* mutscan_start_scan(MutScan *);
 
 /* frame shift detection */
-GtStrArray* mutscan_frame(MutScan *, GtStrArray*);
+unsigned long mutscan_frame(MutScan *, ResultSet*);
 
 /* missense nonsense mutation detection */
-GtStrArray* mutscan_miss(MutScan *mut);
+unsigned long mutscan_miss(MutScan *mut, ResultSet*);
 
 /* splice site detection */
-GtStrArray* mutscan_splice(MutScan *mut);
+unsigned long mutscan_splice(MutScan *mut, ResultSet*);
 
 /* 5' UTR 2000bp Upstream detection 3' 500bp downstream detection */
+unsigned long mutscan_utr(MutScan *mut, ResultSet*);
 
 /* intron mutation detection */
-GtStrArray* mutscan_exon(MutScan *mut);
-
+unsigned long mutscan_exon(MutScan *mut, ResultSet*);
 
 
 void mutscan_reset(MutScan *mut);

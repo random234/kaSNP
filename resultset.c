@@ -1,4 +1,16 @@
+#include <string.h>
 #include "genometools.h"
+#include "core/str_array_api.h"
+#include "extended/feature_node_iterator_api.h"
+#include "extended/node_visitor_api.h"
+#include "extended/genome_node_api.h"
+#include "core/undef_api.h"
+#include "core/unused_api.h"
+#include "core/assert_api.h"
+#include "core/cstr_api.h"
+#include "core/phase_api.h"
+#include "mutscan.h"
+#include "mutgene.h"
 #include "resultset.h"
 
 struct ResultSet{
@@ -11,18 +23,19 @@ struct ResultSet{
   GtStr *id;
   
   /* in_exon results */
-    
+  GtArray *mrna_ids;
+  //~ GtStrArray *mrna_ids;    
+  
   /* frame shift results */
-  
+  unsigned long frms;
   /* missense nonssense results */
-  
-  
-  
-  
+
 };
 
 ResultSet* resultset_new(void) {
-  ResultSet *r = gt_malloc(sizeof(ResultSet));
+  ResultSet *r = gt_malloc(sizeof(*r));
+  r->mrna_ids = gt_array_new(sizeof (GtStr *));
+  //~ r->mrna_ids = gt_str_array_new();
   return r;
 }
 
@@ -65,3 +78,29 @@ GtStr * resultset_get_gene_name(ResultSet *r) {
   gt_assert(r);
   return r->gene_name;
 }
+
+void resultset_add_mrna_id(ResultSet *r, GtStr *mi) {
+  gt_assert(r);
+  gt_array_add(r->mrna_ids, mi);
+  //~ gt_str_array_add(r->mrna_ids, mi);
+}
+
+GtArray * resultset_get_mrna_ids(ResultSet *r) {
+  gt_assert(r);
+  return r->mrna_ids;
+}
+
+unsigned long resultset_check_mrna_ids(ResultSet *r, GtStr *id) {
+  int i;
+  unsigned long res = 1;
+  
+  for(i = 0;i < gt_array_size(r->mrna_ids); i++) {
+    if(strcmp(gt_array_get(r->mrna_ids, 0), gt_str_get(id)) == 0) {
+      res = 0;
+    }    
+  }  
+  return res;
+}
+
+
+
