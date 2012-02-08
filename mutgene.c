@@ -27,6 +27,9 @@ struct MutGene {
 
 MutGene* mutgene_new(void) {
   MutGene *g = gt_malloc(sizeof *g);
+  g->id = gt_str_new();
+  g->gene_name = gt_str_new();
+  g->type = gt_str_new();
   g->rng_start = 0;
   g->rng_end = 0;
   g->phase = 0;
@@ -42,7 +45,7 @@ GtStr* mutgene_get_id(MutGene *g) {
 
 void mutgene_set_id(MutGene *g, GtStr *i) {
   gt_assert(g);
-  g->type = i;  
+  g->id = i;  
 }
 
 GtStr* mutgene_get_gene_name(MutGene *g) {

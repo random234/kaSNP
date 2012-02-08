@@ -23,7 +23,7 @@ GtStr * resultset_get_gene_name(ResultSet *);
 
 void resultset_add_mrna_id(ResultSet *, GtStr *);
 
-GtArray * resultset_get_mrna_ids(ResultSet *);
+GtStrArray * resultset_get_mrna_ids(ResultSet *);
 
 unsigned long resultset_check_mrna_ids(ResultSet *, GtStr *);
 
