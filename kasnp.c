@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv) {
     const char *gff3_file;
-    const char *fas_file;
+    const char *encseq_file;
     const char *vcf_file;
     unsigned long splice_site_range;
     
@@ -15,11 +15,11 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	} else {		
         gff3_file = argv[1];
-        fas_file = argv[2];
+        encseq_file = argv[2];
         vcf_file = argv[3];
         splice_site_range = strtol(argv[4], NULL,0);
 
-        read_input(gff3_file, vcf_file, fas_file, splice_site_range);
+        read_input(gff3_file, vcf_file, encseq_file, splice_site_range);
 	}
     return 0;
 }

@@ -10,22 +10,20 @@
 #include "extended/node_visitor_api.h"
 #include "core/splitter_api.h"
 #include "core/str_array_api.h"
+#include "core/encseq_api.h"
+#include "core/readmode_api.h"
 #include "gff3vis.h"
 #include "mutscan.h"
 
 
-/*
-#include "vcfentry.h"
-#include "mutscan.h"
-#include "gff3data.h"
-#include "gff3entry.h"
-*/
 
 
 struct GtGff3Vis {
   const GtNodeVisitor parent_instance;
   GtTokenizer *vcf_token;
-  GtStr *fas_file;
+  GtEncseq *encseq;
+  GtEncseqLoader *encseq_load;
+    
   unsigned long splice_site_range;
   //GtStrArray *sa;
 };
@@ -49,6 +47,8 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   GtFeatureNodeIterator *fni;
   GtFeatureNode *node;
   GtGff3Vis *v;
+  GtEncseqReader *encseq_read_fw;
+  GtEncseqReader *encseq_read_bw;
   int had_err = 0;
   GtSplitter *vcf_split;
   GtStr *line, *tokenline;
@@ -58,6 +58,9 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   unsigned long i;
   gt_error_check(err);
   v = gt_gff3_vis_cast(nv);
+  
+  encseq_read_fw = gt_encseq_create_reader_with_readmode(v->encseq,0, 0);
+  encseq_read_bw = gt_encseq_create_reader_with_readmode(v->encseq,1, 0);
 
   /* no more lines in VCF */
   if (!gt_tokenizer_has_token(v->vcf_token))
@@ -114,7 +117,8 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
         /* pass VCF entries and FeatureNode containing child nodes to MutScan object */
         //~ if(!mutscan_init(mut, vcf_arr, node))
           //~ break;
-        mutscan_init(mut, vcf_arr, node);
+        printf("%lu",v->splice_site_range);
+        mutscan_init(mut, vcf_arr, node, encseq_read_fw, encseq_read_bw);
         mutscan_start_scan(mut);
         
         mutscan_reset(mut);
@@ -150,11 +154,11 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
 
 void gt_gff3_vis_free(GtNodeVisitor *nv)
 {
-  GtGff3Vis *v;
+  GT_UNUSED GtGff3Vis *v;
   if (!nv) return;
   v = gt_gff3_vis_cast(nv);
   //gt_str_array_delete(v->sa);
-  gt_str_delete(v->fas_file);
+  //~ gt_str_delete(v->fas_file);
 }
 
 const GtNodeVisitorClass* gt_gff3_vis_class()
@@ -172,91 +176,18 @@ const GtNodeVisitorClass* gt_gff3_vis_class()
   return nvc;
 }
 
-GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *fas_file, unsigned long splice_site_range)
+GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *encseq_file, unsigned long splice_site_range)
 {
+  GtError *err;
+  err = gt_error_new();
   GtGff3Vis *mfv;
   GtNodeVisitor *nv;
   nv = gt_node_visitor_create(gt_gff3_vis_class());
   mfv = gt_gff3_vis_cast(nv);
-  //mfv->sa = gt_str_array_new();
   mfv->vcf_token = vcf_token;
-  mfv->fas_file = fas_file;  
+  mfv->encseq_load = gt_encseq_loader_new();
+  mfv->encseq = gt_encseq_loader_load(mfv->encseq_load,gt_str_get(encseq_file), err);
   mfv->splice_site_range = splice_site_range;
   return nv;
 }
-
-//~ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
-                                           //~ GtFeatureNode *fn,
-                                            //~ GtError *err)
-//~ {
-  //~ GtFeatureNodeIterator *fni, *fni_childs;
-  //~ GtFeatureNode *node, *child;
-  //~ GtGff3Vis *v;
-  //~ GtSplitter *vcf_split;  
-  //~ GtRange rng;
-  //~ gt_error_check(err);
-  //~ v = gt_gff3_vis_cast(nv);
-  //~ fni = gt_feature_node_iterator_new(fn);
-  //~ unsigned long len = 0;
-  //~ unsigned long vcf_pos = 0;
-    
-
-    
-  //~ vcf_split = gt_splitter_new();
-  //~ len = gt_str_length(gt_tokenizer_get_token(v->vcf_token)); // gt_str_length
-  //~ gt_splitter_split(vcf_split, gt_str_get(gt_tokenizer_get_token(v->vcf_token)),len, '\t');  
-  //~ vcf_pos = 0; vcf_pos = strtol(gt_splitter_get_token(vcf_split,1),NULL,0);
-  //~ rng.start = 0; rng.end = 1;
-  //~ while((node = gt_feature_node_iterator_next(fni))) {
-    
-    //~ // wenn gen gefunden verarbeite es ansonsten hole naechsten node 
-    //~ if(strcmp(gt_feature_node_get_type(node), "gene") == 0) {
-      //~ rng = gt_genome_node_get_range((GtGenomeNode*) node);
-      //~ printf("found gene\n");
-      
-      //~ // solange aktuelle vcf_pos kleiner als start des aktuell betrachteten Gens hole naechsten VCF Eintrag
-      //~ while(vcf_pos<rng.start) {
-        //~ printf("increasing VCF position because rng.start<vcf_pos POS: %lu rng.start: %lu\n", vcf_pos, rng.start);
-        //~ gt_tokenizer_next_token(v->vcf_token);
-        //~ gt_splitter_reset(vcf_split);
-        //~ len=0;  len = gt_str_length(gt_tokenizer_get_token(v->vcf_token));
-        //~ gt_splitter_split(vcf_split, gt_str_get(gt_tokenizer_get_token(v->vcf_token)),len, '\t');
-        //~ vcf_pos = 0; vcf_pos = strtol(gt_splitter_get_token(vcf_split,1),NULL,0);
-      //~ }
-      
-      
-      
-      //~ // wenn gen gefunden und vcf_pos innerhalb des gens hole alle Kindelemente des zugehoerigen Gens
-      //~ while(vcf_pos<=rng.end && vcf_pos >= rng.start){   
-        //~ fni_childs =  gt_feature_node_iterator_new_direct(node);      
-        //~ while ((child = gt_feature_node_iterator_next(fni_childs))) {
-          //~ printf("getting child elements for VCF entry POS: %lu\n",vcf_pos);
-          
-          
-          
-          
-        //~ }
-        //~ VcfEntry *vcf_entry = vcf_entry_new(vcf_split);
-        //~ Gff3Data *gff3data;
-        //~ check_frame(gff3data, vcf_entry);
-        
-        //~ gt_feature_node_iterator_delete(fni_childs);
-        
-        //~ gt_tokenizer_next_token(v->vcf_token);
-        //~ gt_splitter_reset(vcf_split);
-        //~ len=0;  len = gt_str_length(gt_tokenizer_get_token(v->vcf_token));
-        //~ gt_splitter_split(vcf_split, gt_str_get(gt_tokenizer_get_token(v->vcf_token)),len, '\t');
-        //~ vcf_pos = 0; vcf_pos = strtol(gt_splitter_get_token(vcf_split,1),NULL,0);
-      //~ }
-
-      //~ while(vcf_pos>rng.end) {
-        //~ printf("increasing GFF3 position because vcf_pos>rng.end POS: %lu rng.end: %lu\n", vcf_pos, rng.end);
-        //~ node = gt_feature_node_iterator_next(fni);
-        //~ rng = gt_genome_node_get_range((GtGenomeNode*) node);
-      //~ }
-    //~ }
-  //~ }
-  //~ gt_feature_node_iterator_delete(fni);
-  //~ return 0;
-//~ }
 

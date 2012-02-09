@@ -20,7 +20,7 @@ unsigned long mutscan_get_splice_site_interval(MutScan *);
 
 void mutscan_set_splice_site_interval(MutScan *, unsigned long);
 
-unsigned long mutscan_init(MutScan *, GtStrArray *, GtFeatureNode *);
+unsigned long mutscan_init(MutScan *, GtStrArray *, GtFeatureNode *,GtEncseqReader *,GtEncseqReader *);
 
 ResultSet* mutscan_start_scan(MutScan *);
 

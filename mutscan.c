@@ -17,7 +17,8 @@
 struct MutScan {
   GtStrArray *vcf_arr;
   MutGene *mut_gene;  
-  //~ GtFeatureNode *node, *child;
+  GtEncseqReader *encseq_fw;
+  GtEncseqReader *encseq_bw;
   unsigned long splice_site_interval;
 };
 
@@ -62,10 +63,12 @@ void mutscan_set_splice_site_interval(MutScan *m, unsigned long s) {
   m->splice_site_interval = s;
 }
 
-unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn) {
+unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn, GtEncseqReader *rd_forw, GtEncseqReader *rd_backw) {
   mut->vcf_arr = vcf;
   MutGene *gene = mutgene_new();
   mut->mut_gene = gene;
+  mut->encseq_fw = rd_forw;
+  mut->encseq_bw = rd_backw;
    
   GtFeatureNode *node, *child;    
   GtFeatureNodeIterator *fni;
