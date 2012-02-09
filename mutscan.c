@@ -8,6 +8,7 @@
 #include "core/unused_api.h"
 #include "core/assert_api.h"
 #include "core/cstr_api.h"
+#include "core/splitter_api.h"
 #include "core/phase_api.h"
 #include "mutscan.h"
 #include "mutgene.h"
@@ -187,9 +188,42 @@ unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
 }
 
 unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
-  unsigned long i,j,had_err = 0;
-  unsigned long var_pos = strtol(gt_str_array_get(mutscan_get_vcf_array(m),1),NULL,0);
+  unsigned long i,j,k,had_err = 0;
+  resultset_set_vcf_array(r,mutscan_get_vcf_array(m));
+  GtStrArray *ref;
+  GtStr *ref_temp;
+  GtSplitter *ref_split;
+  GtStrArray *alt;
+  GtStr *alt_temp;
+  GtSplitter *alt_split;
   
+  ref = gt_str_array_new();
+  ref_temp = gt_str_new();
+  alt_temp = gt_str_new();
+  alt = gt_str_array_new();
+  
+  ref_split = gt_splitter_new();
+  alt_split = gt_splitter_new();
+  
+  ref_temp = gt_str_new_cstr(gt_str_array_get(resultset_get_vcf_array(r),3));
+  alt_temp = gt_str_new_cstr(gt_str_array_get(resultset_get_vcf_array(r),4));
+  
+  gt_splitter_split(ref_split, gt_str_get(ref_temp),
+                    gt_str_length(ref_temp), ',');
+  gt_splitter_split(alt_split, gt_str_get(alt_temp),
+                    gt_str_length(alt_temp), ',');
+
+  for(j=0;j<gt_splitter_size(ref_split);j++) {
+    gt_str_array_add_cstr(ref,gt_splitter_get_token(ref_split,j));
+  }
+  for(j=0;j<gt_splitter_size(alt_split);j++) {
+    gt_str_array_add_cstr(alt,gt_splitter_get_token(alt_split,j));
+  }
+  
+  
+  printf("ref %s alt %s", gt_str_get(ref_temp), gt_str_get(alt_temp));
+  gt_str_reset(ref_temp);
+  gt_str_reset(alt_temp);
   
   printf("------- mutscan_frame() -------\n");
   GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
@@ -204,14 +238,20 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
     if(resultset_check_mrna_ids(r, mutgene_get_id(mrna_elem)) == 0) {
       printf("found a mRNA with Variation id: %s at pos: %lu\n", gt_str_get(mutgene_get_id(mrna_elem)), resultset_get_var_pos(r));
       
-      GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
-      for(j=0;j<gt_array_size(mrna_child_arr);j++){
-        MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
+      for(j=0;j<gt_str_array_size(ref);j++) {
+        gt_str_set(ref_temp,gt_str_array_get(ref,j));
         
-        
-        if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {}
-        mrna_child_elem = NULL;
+        for(k=0;k<gt_str_array_size(alt);k++) {
+          gt_str_set(alt_temp,gt_str_array_get(alt,k));
+          if((gt_str_length(ref_temp) - gt_str_length(alt_temp)) == 0 || (gt_str_length(ref_temp) - gt_str_length(alt_temp)) % 3 == 0) {
+            printf("found frameshifting variation in gene %s \n", gt_str_get(mutgene_get_gene_name(mrna_elem)));
+          }
+          gt_str_reset(alt_temp);
+        }
+        gt_str_reset(ref_temp);
       }
+      
+      
     }
     mrna_elem = NULL;
   }
