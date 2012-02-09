@@ -47,8 +47,7 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   GtFeatureNodeIterator *fni;
   GtFeatureNode *node;
   GtGff3Vis *v;
-  GtEncseqReader *encseq_read_fw;
-  GtEncseqReader *encseq_read_bw;
+  GtEncseqReader *encseq_read;
   int had_err = 0;
   GtSplitter *vcf_split;
   GtStr *line, *tokenline;
@@ -59,8 +58,8 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   gt_error_check(err);
   v = gt_gff3_vis_cast(nv);
   
-  encseq_read_fw = gt_encseq_create_reader_with_readmode(v->encseq,0, 0);
-  encseq_read_bw = gt_encseq_create_reader_with_readmode(v->encseq,1, 0);
+  encseq_read = gt_encseq_create_reader_with_readmode(v->encseq,0, 0);
+  
 
   /* no more lines in VCF */
   if (!gt_tokenizer_has_token(v->vcf_token))
@@ -118,7 +117,7 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
         //~ if(!mutscan_init(mut, vcf_arr, node))
           //~ break;
         printf("%lu",v->splice_site_range);
-        mutscan_init(mut, vcf_arr, node, encseq_read_fw, encseq_read_bw);
+        mutscan_init(mut, vcf_arr, node, v->encseq, encseq_read);
         mutscan_start_scan(mut);
         
         mutscan_reset(mut);

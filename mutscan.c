@@ -17,8 +17,8 @@
 struct MutScan {
   GtStrArray *vcf_arr;
   MutGene *mut_gene;  
-  GtEncseqReader *encseq_fw;
-  GtEncseqReader *encseq_bw;
+  GtEncseq *encseq;
+  GtEncseqReader *encseq_read;
   unsigned long splice_site_interval;
 };
 
@@ -63,13 +63,14 @@ void mutscan_set_splice_site_interval(MutScan *m, unsigned long s) {
   m->splice_site_interval = s;
 }
 
-unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn, GtEncseqReader *rd_forw, GtEncseqReader *rd_backw) {
+unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, GtFeatureNode *fn, GtEncseq *en, GtEncseqReader *rd) {
   mut->vcf_arr = vcf;
   MutGene *gene = mutgene_new();
   mut->mut_gene = gene;
-  mut->encseq_fw = rd_forw;
-  mut->encseq_bw = rd_backw;
-   
+  mut->encseq = en;
+  mut->encseq_read = rd;
+  
+     
   GtFeatureNode *node, *child;    
   GtFeatureNodeIterator *fni;
   GtFeatureNodeIterator *fni_child;
@@ -145,6 +146,8 @@ ResultSet* mutscan_start_scan(MutScan *m) {
   //~ for(i=0;i<gt_str_array_size(frame_res);i++) {
     //~ printf("%s \t",gt_str_array_get(frame_res, i));
   //~ }
+  mutscan_miss(m, r);
+  
   printf("\n");
   return 0;
 }
@@ -263,21 +266,30 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
 
 /* This function checks for nonsense & missense mutations */
 unsigned long mutscan_miss(MutScan *m,  GT_UNUSED ResultSet *r){
-  unsigned long i,j,had_err = 0;
-    
+  unsigned long i,j,k,range,had_err = 0;
+  GtEncseqReader *read;
+  read = m->encseq_read;
+  
+  
   printf("------- mutscan_miss() -------\n");
   GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
   for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
     MutGene *mrna_elem = gt_array_get(mrna_arr, i);
+       
     
     GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
-    GtStr *res_str = gt_str_new();
     for(j=0;j<gt_array_size(mrna_child_arr);j++){
-      GT_UNUSED MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
-    
+      MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
+      gt_encseq_reader_reinit_with_readmode(read,m->encseq,0,mutgene_get_rng_start(mrna_child_elem));
+      range = mutgene_get_rng_end(mrna_child_elem) - mutgene_get_rng_start(mrna_child_elem);
+      printf("Start of exon: %lu Range: %lu\n",mutgene_get_rng_start(mrna_child_elem),range);
+      for(k=0;k<range;k++){
+        printf("%c", gt_encseq_reader_next_decoded_char(read));
+      }
+      printf("\n");
       mrna_child_elem = NULL;
     }
-    gt_str_delete(res_str);
+    
     mrna_elem = NULL;
   }
   return had_err;
