@@ -27,4 +27,16 @@ GtStrArray * resultset_get_mrna_ids(ResultSet *);
 
 unsigned long resultset_check_mrna_ids(ResultSet *, GtStr *);
 
+void resultset_add_prot_seq(ResultSet *, GtStr *);
+
+GtStrArray * resultset_get_prot_seqs(ResultSet *);
+  
+void resultset_set_miss(ResultSet *, GtStr *);
+
+GtStr * resultset_get_miss(ResultSet *);
+
+void resultset_set_nons(ResultSet *, GtStr *);
+
+GtStr * resultset_get_nons(ResultSet *);
+
 #endif

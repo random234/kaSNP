@@ -29,7 +29,8 @@ struct ResultSet{
   unsigned long frms;
   /* missense nonssense results */
   GtStrArray *prot_seqs;
-  
+  GtStr *miss;
+  GtStr *nons;
 
 };
 
@@ -38,6 +39,10 @@ ResultSet* resultset_new(void) {
   r->vcf_arr = gt_str_array_new();
   r->mrna_ids = gt_str_array_new();
   r->prot_seqs = gt_str_array_new();
+  r->miss = gt_str_new();
+  gt_str_set(r->miss,"NONE");
+  r->nons = gt_str_new();
+  gt_str_set(r->nons,"NONE");
   return r;
 }
 
@@ -114,3 +119,22 @@ GtStrArray * resultset_get_prot_seqs(ResultSet *r) {
   return r->prot_seqs;
 }
 
+void resultset_set_miss(ResultSet *r, GtStr *i) {
+  gt_assert(r);
+  r->miss = i;
+}
+
+GtStr * resultset_get_miss(ResultSet *r) {
+  gt_assert(r);
+  return r->miss;
+}
+
+void resultset_set_nons(ResultSet *r, GtStr *i) {
+  gt_assert(r);
+  r->nons = i;
+}
+
+GtStr * resultset_get_nons(ResultSet *r) {
+  gt_assert(r);
+  return r->miss;
+}

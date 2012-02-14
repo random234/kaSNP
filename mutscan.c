@@ -271,7 +271,8 @@ unsigned long mutscan_miss(MutScan *m,  GT_UNUSED ResultSet *r){
   unsigned long i,j,k,range,had_err = 0;
   GtEncseqReader *read;
   read = m->encseq_read;
-  
+  GtStr *prot_seq;
+  prot_seq = gt_str_new();
   
   printf("------- mutscan_miss() -------\n");
   
@@ -293,15 +294,17 @@ unsigned long mutscan_miss(MutScan *m,  GT_UNUSED ResultSet *r){
       range = mutgene_get_rng_end(mrna_child_elem) - mutgene_get_rng_start(mrna_child_elem);
       printf("Start of exon: %lu Range: %lu\n",mutgene_get_rng_start(mrna_child_elem),range);
       
-      char *buffer = gt_alloc(sizeof(char * range));
-      gt_encseq_extract_decoded(v->encseq, buffer, mutgene_get_rng_end(mrna_child_elem), mutgene_get_rng_start(mrna_child_elem));
+      for(k=0;k<range;k++){
+        gt_str_append_char(prot_seq,gt_encseq_reader_next_decoded_char(read));
+      }
+      resultset_add_prot_seq(r, prot_seq);
       
-      printf("%s", buffer);
       
-      //~ for(k=0;k<range;k++){
-        //~ printf("%c", gt_encseq_reader_next_decoded_char(read));
-      //~ }
-      printf("\n");
+      
+      
+      //~ printf("prot_seq: %s ", gt_str_array_get(resultset_get_prot_seqs(r),0));
+      //~ printf("\n");
+      gt_str_reset(prot_seq);
       mrna_child_elem = NULL;
     }
     
