@@ -28,6 +28,8 @@ struct ResultSet{
   /* frame shift results */
   unsigned long frms;
   /* missense nonssense results */
+  GtStrArray *prot_seqs;
+  
 
 };
 
@@ -35,6 +37,7 @@ ResultSet* resultset_new(void) {
   ResultSet *r = gt_malloc(sizeof(*r));
   r->vcf_arr = gt_str_array_new();
   r->mrna_ids = gt_str_array_new();
+  r->prot_seqs = gt_str_array_new();
   return r;
 }
 
@@ -99,5 +102,15 @@ unsigned long resultset_check_mrna_ids(ResultSet *r, GtStr *id) {
     }
   }
   return res;
+}
+
+void resultset_add_prot_seq(ResultSet *r, GtStr *mi) {
+  gt_assert(r);
+  gt_str_array_add(r->prot_seqs, mi);
+}
+
+GtStrArray * resultset_get_prot_seqs(ResultSet *r) {
+  gt_assert(r);
+  return r->prot_seqs;
 }
 
