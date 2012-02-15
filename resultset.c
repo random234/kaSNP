@@ -29,8 +29,8 @@ struct ResultSet{
   unsigned long frms;
   /* missense nonssense results */
   GtStrArray *dna_seqs;
-  GtStr *miss;
-  GtStr *nons;
+  unsigned long miss;
+  unsigned long nons;
   char amino;
 };
 
@@ -39,10 +39,8 @@ ResultSet* resultset_new(void) {
   r->vcf_arr = gt_str_array_new();
   r->mrna_ids = gt_str_array_new();
   r->dna_seqs = gt_str_array_new();
-  r->miss = gt_str_new();
-  gt_str_set(r->miss,"NONE");
-  r->nons = gt_str_new();
-  gt_str_set(r->nons,"NONE");
+  r->miss = 0;
+  r->nons = 0;
   return r;
 }
 
@@ -119,22 +117,22 @@ GtStrArray * resultset_get_dna_seqs(ResultSet *r) {
   return r->dna_seqs;
 }
 
-void resultset_set_miss(ResultSet *r, GtStr *i) {
+void resultset_set_miss(ResultSet *r, unsigned long i) {
   gt_assert(r);
   r->miss = i;
 }
 
-GtStr * resultset_get_miss(ResultSet *r) {
+unsigned long resultset_get_miss(ResultSet *r) {
   gt_assert(r);
   return r->miss;
 }
 
-void resultset_set_nons(ResultSet *r, GtStr *i) {
+void resultset_set_nons(ResultSet *r, unsigned long i) {
   gt_assert(r);
   r->nons = i;
 }
 
-GtStr * resultset_get_nons(ResultSet *r) {
+unsigned long resultset_get_nons(ResultSet *r) {
   gt_assert(r);
   return r->miss;
 }

@@ -31,12 +31,12 @@ void resultset_add_dna_seq(ResultSet *, GtStr *);
 
 GtStrArray * resultset_get_dna_seqs(ResultSet *);
   
-void resultset_set_miss(ResultSet *, GtStr *);
+void resultset_set_miss(ResultSet *, unsigned long);
 
-GtStr * resultset_get_miss(ResultSet *);
+unsigned long resultset_get_miss(ResultSet *);
 
-void resultset_set_nons(ResultSet *, GtStr *);
+void resultset_set_nons(ResultSet *, unsigned long);
 
-GtStr * resultset_get_nons(ResultSet *);
+unsigned long resultset_get_nons(ResultSet *);
 
 #endif
