@@ -31,6 +31,7 @@ struct ResultSet{
   GtStrArray *prot_seqs;
   GtStr *miss;
   GtStr *nons;
+  char amino;
 };
 
 ResultSet* resultset_new(void) {

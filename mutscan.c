@@ -13,6 +13,7 @@
 #include "core/translator_api.h"
 #include "core/codon_iterator_api.h"
 #include "core/codon_iterator_simple_api.h"
+#include "core/trans_table_api.h"
 #include "mutscan.h"
 #include "mutgene.h"
 #include "resultset.h"
@@ -269,65 +270,75 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
 
 /* This function checks for nonsense & missense mutations */
 unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
-  unsigned long i,j,k,range,had_err = 0;
-  char translated;
-  unsigned int frame;
-  
-  
-  
+  unsigned long i,j,k,l,range,rel_var_pos,had_err = 0;
+  char amino;  
+  char amino_mut;
+  GtStr *nucl_mut;
+  GtStr *temp_arr; 
+  GtSplitter *alt_split;
   GtEncseqReader *read;
   GtStr *prot_seq;
-  GtTranslator *trans;
-  GtCodonIterator *codon_it;  
+  GtTransTable *trans_t;
   read = m->encseq_read;  
   prot_seq = gt_str_new();
-
+  alt_split = gt_splitter_new();
   
-  //~ codon_it = gt_codon_iterator_create(const GtCodonIteratorClass*);
-
-  
-  
+  trans_t = gt_trans_table_new_standard(m->err);  
   
   printf("------- mutscan_miss() -------\n");  
   GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
   for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
-    MutGene *mrna_elem = gt_array_get(mrna_arr, i);
-       
-    
+    MutGene *mrna_elem = gt_array_get(mrna_arr, i);    
     GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
     for(j=0;j<gt_array_size(mrna_child_arr);j++){
       MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
       gt_encseq_reader_reinit_with_readmode(read,m->encseq,0,gt_encseq_seqstartpos(m->encseq,m->file_chromosome) + mutgene_get_rng_start(mrna_child_elem)-1);
       
-      printf("file number: %lu \n ",gt_encseq_filenum(m->encseq, mutgene_get_rng_start(mrna_child_elem)));
-      printf("file startpos: %lu \n",gt_encseq_filestartpos(m->encseq,0));
+  
+      if(resultset_get_var_pos(r) < mutgene_get_rng_end(mrna_child_elem) && resultset_get_var_pos(r) > mutgene_get_rng_start(mrna_child_elem)) {
+        range = mutgene_get_rng_end(mrna_child_elem) - mutgene_get_rng_start(mrna_child_elem);
+        printf("Start of exon: %lu Range: %lu\n",mutgene_get_rng_start(mrna_child_elem),range);
       
-      //~ printf("encseq_start_pos: %lu \n",gt_encseq_seqstartpos(m->encseq,10));
-      
-      range = mutgene_get_rng_end(mrna_child_elem) - mutgene_get_rng_start(mrna_child_elem);
-      printf("Start of exon: %lu Range: %lu\n",mutgene_get_rng_start(mrna_child_elem),range);
-      
-      for(k=0;k<range;k++){
-        gt_str_append_char(prot_seq,gt_encseq_reader_next_decoded_char(read));
-      }
-      resultset_add_prot_seq(r, prot_seq);
+        for(k=0;k<range;k++){
+          gt_str_append_char(prot_seq,gt_encseq_reader_next_decoded_char(read));
+        }
+        resultset_add_prot_seq(r, prot_seq);
 
-      codon_it = gt_codon_iterator_simple_new(gt_str_get(prot_seq),gt_str_length(prot_seq),m->err);
-      trans = gt_translator_new(codon_it);
-      
-
-      if(gt_translator_next(trans, &translated, &frame, m->err) == 0) {
-        printf("Success");
-      } else {
-        printf("Crap");
+        rel_var_pos = resultset_get_var_pos(r) - mutgene_get_rng_start(mrna_child_elem) + mutgene_get_phase(mrna_child_elem);
+        printf("Variation pos: %lu\n",resultset_get_var_pos(r));
+        printf("Relative Variation pos: %lu\n",rel_var_pos);
+        if(gt_trans_table_translate_codon(trans_t,gt_str_get(prot_seq)[rel_var_pos], gt_str_get(prot_seq)[rel_var_pos+1], gt_str_get(prot_seq)[rel_var_pos+2], &amino, m->err)== 0) {
+          printf("ORIGINAL AMINOACID: %c \n",amino);        
+        } else {
+          gt_error_set(m->err,"error during translation");
+        }
+        
+        temp_arr = gt_str_new_cstr(gt_str_array_get(resultset_get_vcf_array(r),4));        
+        gt_splitter_split(alt_split, gt_str_get(temp_arr),gt_str_length(temp_arr), ',');
+        printf("splitter size %lu: \n",gt_splitter_size(alt_split));
+        for(l=0;l<gt_splitter_size(alt_split);l++) {
+          nucl_mut = gt_str_new_cstr(gt_splitter_get_token(alt_split, l));          
+          if(gt_str_length(nucl_mut)==1) {
+            printf("added char %c: \n",gt_str_get(prot_seq)[rel_var_pos+1]);        
+            gt_str_append_char(nucl_mut,gt_str_get(prot_seq)[rel_var_pos+1]);
+          }
+          if(gt_str_length(nucl_mut)==2) {
+            printf("added char %c: \n",gt_str_get(prot_seq)[rel_var_pos+2]);        
+            gt_str_append_char(nucl_mut,gt_str_get(prot_seq)[rel_var_pos+2]);
+          }
+          printf("nucl_mut: %s \n",gt_str_get(nucl_mut));        
+          if(gt_trans_table_translate_codon(trans_t,gt_str_get(nucl_mut)[0], gt_str_get(nucl_mut)[1], gt_str_get(nucl_mut)[2], &amino_mut, m->err)== 0) {
+            printf("MUTATED AMINOACID: %c \n",amino_mut);        
+          } else {            
+            gt_error_set(m->err,"error during translation");
+          }
+          gt_str_reset(nucl_mut);
+        }
+        gt_str_reset(temp_arr);
+        gt_splitter_reset(alt_split);
+        gt_str_reset(prot_seq);
+        mrna_child_elem = NULL;
       }
-      
-      
-      
-      //~ printf("prot_seq: %s ", gt_str_array_get(resultset_get_prot_seqs(r),0));
-      //~ printf("\n");
-      gt_str_reset(prot_seq);
-      mrna_child_elem = NULL;
     }
     
     mrna_elem = NULL;

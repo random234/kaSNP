@@ -87,7 +87,7 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
     temp = gt_str_new_cstr(gt_encseq_description(v->encseq,&desclen,i));       
     gt_splitter_split(desc_split, gt_str_get(temp),strlen(gt_str_get(temp)), ' ');  
     gt_str_array_add(desc_arr,gt_str_new_cstr(gt_splitter_get_token(desc_split,0)));
-    printf("desc: %s \n", gt_str_array_get(desc_arr,i));
+    //~ printf("desc: %s \n", gt_str_array_get(desc_arr,i));
     gt_splitter_reset(desc_split);
     gt_str_reset(temp);
   }
