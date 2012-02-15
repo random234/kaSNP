@@ -310,7 +310,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
         if(gt_trans_table_translate_codon(trans_t,gt_str_get(prot_seq)[rel_var_pos], gt_str_get(prot_seq)[rel_var_pos+1], gt_str_get(prot_seq)[rel_var_pos+2], &amino, m->err)== 0) {
           printf("ORIGINAL AMINOACID: %c \n",amino);        
         } else {
-          gt_error_set(m->err,"error during translation");
+          gt_error_set(m->err,"error during ORIGINAL AA translation");
         }
         
         temp_arr = gt_str_new_cstr(gt_str_array_get(resultset_get_vcf_array(r),4));        
@@ -330,7 +330,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
           if(gt_trans_table_translate_codon(trans_t,gt_str_get(nucl_mut)[0], gt_str_get(nucl_mut)[1], gt_str_get(nucl_mut)[2], &amino_mut, m->err)== 0) {
             printf("MUTATED AMINOACID: %c \n",amino_mut);        
           } else {            
-            gt_error_set(m->err,"error during translation");
+            gt_error_set(m->err,"error during ALTERNATE AA translation");
           }
           gt_str_reset(nucl_mut);
         }
