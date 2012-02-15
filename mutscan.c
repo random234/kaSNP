@@ -11,6 +11,8 @@
 #include "core/splitter_api.h"
 #include "core/phase_api.h"
 #include "core/translator_api.h"
+#include "core/codon_iterator_api.h"
+#include "core/codon_iterator_simple_api.h"
 #include "mutscan.h"
 #include "mutgene.h"
 #include "resultset.h"
@@ -21,6 +23,7 @@ struct MutScan {
   MutGene *mut_gene;  
   GtEncseq *encseq;
   GtEncseqReader *encseq_read;
+  GtError *err;
   unsigned long splice_site_interval;
 };
 
@@ -31,7 +34,7 @@ MutScan* mutscan_new(void) {
   MutScan *m = gt_malloc(sizeof *m);
   
   m->splice_site_interval = 0;
-  
+  m->err = gt_error_new();
   return m;
 }
 
@@ -258,8 +261,6 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
         }
         gt_str_reset(ref_temp);
       }
-      
-      
     }
     mrna_elem = NULL;
   }
@@ -267,15 +268,27 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
 }
 
 /* This function checks for nonsense & missense mutations */
-unsigned long mutscan_miss(MutScan *m,  GT_UNUSED ResultSet *r){
+unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
   unsigned long i,j,k,range,had_err = 0;
+  char translated;
+  unsigned int frame;
+  
+  
+  
   GtEncseqReader *read;
-  read = m->encseq_read;
   GtStr *prot_seq;
+  GtTranslator *trans;
+  GtCodonIterator *codon_it;  
+  read = m->encseq_read;  
   prot_seq = gt_str_new();
+
   
-  printf("------- mutscan_miss() -------\n");
+  //~ codon_it = gt_codon_iterator_create(const GtCodonIteratorClass*);
+
   
+  
+  
+  printf("------- mutscan_miss() -------\n");  
   GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
   for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
     MutGene *mrna_elem = gt_array_get(mrna_arr, i);
@@ -298,7 +311,16 @@ unsigned long mutscan_miss(MutScan *m,  GT_UNUSED ResultSet *r){
         gt_str_append_char(prot_seq,gt_encseq_reader_next_decoded_char(read));
       }
       resultset_add_prot_seq(r, prot_seq);
+
+      codon_it = gt_codon_iterator_simple_new(gt_str_get(prot_seq),gt_str_length(prot_seq),m->err);
+      trans = gt_translator_new(codon_it);
       
+
+      if(gt_translator_next(trans, &translated, &frame, m->err) == 0) {
+        printf("Success");
+      } else {
+        printf("Crap");
+      }
       
       
       
