@@ -256,7 +256,8 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
         for(k=0;k<gt_str_array_size(alt);k++) {
           gt_str_set(alt_temp,gt_str_array_get(alt,k));
           if((gt_str_length(ref_temp) - gt_str_length(alt_temp)) == 0 || (gt_str_length(ref_temp) - gt_str_length(alt_temp)) % 3 == 0) {
-            printf("found frameshifting variation in gene %s \n", gt_str_get(mutgene_get_gene_name(mrna_elem)));
+            //~ printf("found frameshifting variation in gene %s \n", gt_str_get(mutgene_get_gene_name(mrna_elem)));
+            resultset_set_frms(r,1);
           }
           gt_str_reset(alt_temp);
         }
@@ -308,9 +309,9 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
         resultset_add_dna_seq(r, dna_seq);
 
         rel_var_pos = resultset_get_var_pos(r) - mutgene_get_rng_start(mrna_child_elem) + mutgene_get_phase(mrna_child_elem);
-        printf("Variation pos: %lu\n",resultset_get_var_pos(r));
-        printf("Relative Variation pos: %lu\n",rel_var_pos);
-        printf("DNA_SEQ: %s\n", gt_str_get(dna_seq));
+        //~ printf("Variation pos: %lu\n",resultset_get_var_pos(r));
+        //~ printf("Relative Variation pos: %lu\n",rel_var_pos);
+        //~ printf("DNA_SEQ: %s\n", gt_str_get(dna_seq));
         
         gt_str_append_char(nucl_codon,gt_str_get(dna_seq)[rel_var_pos]);
         gt_str_append_char(nucl_codon,gt_str_get(dna_seq)[rel_var_pos+1]);

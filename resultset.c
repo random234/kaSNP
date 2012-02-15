@@ -39,6 +39,7 @@ ResultSet* resultset_new(void) {
   r->vcf_arr = gt_str_array_new();
   r->mrna_ids = gt_str_array_new();
   r->dna_seqs = gt_str_array_new();
+  r->frms = 0;
   r->miss = 0;
   r->nons = 0;
   return r;
@@ -105,6 +106,16 @@ unsigned long resultset_check_mrna_ids(ResultSet *r, GtStr *id) {
     }
   }
   return res;
+}
+
+void resultset_set_frms(ResultSet *r, unsigned long f) {
+  gt_assert(r);
+  r->frms = f;
+}
+
+unsigned long resultset_get_frms(ResultSet *r) {
+  gt_assert(r);
+  return r->frms;
 }
 
 void resultset_add_dna_seq(ResultSet *r, GtStr *mi) {

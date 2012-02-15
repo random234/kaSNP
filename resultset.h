@@ -27,6 +27,10 @@ GtStrArray * resultset_get_mrna_ids(ResultSet *);
 
 unsigned long resultset_check_mrna_ids(ResultSet *, GtStr *);
 
+void resultset_set_frms(ResultSet *, unsigned long);
+  
+unsigned long resultset_get_frms(ResultSet *);
+
 void resultset_add_dna_seq(ResultSet *, GtStr *);
 
 GtStrArray * resultset_get_dna_seqs(ResultSet *);
