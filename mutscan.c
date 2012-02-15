@@ -342,17 +342,11 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
             gt_error_set(m->err,"error during ALTERNATE AA translation");
           }
           
-          gt_str_reset(nucl_codon);
-          gt_str_reset(nucl_codon_mut);
-          gt_str_set(nucl_codon,"UAA");
-          gt_str_set(nucl_codon_mut,"AAA");
           
-          if((gt_trans_table_is_stop_codon(trans_t,gt_str_get(nucl_codon)[0], gt_str_get(nucl_codon)[1], gt_str_get(nucl_codon)[2]) != 0) && (gt_trans_table_is_stop_codon(trans_t,gt_str_get(nucl_codon_mut)[0], gt_str_get(nucl_codon_mut)[1], gt_str_get(nucl_codon_mut)[2]) != 0)) {
-            printf("detected nonsense mutation\n");
+          /* check for nonsense mutations */
+          if((gt_trans_table_is_stop_codon(trans_t,gt_str_get(nucl_codon)[0], gt_str_get(nucl_codon)[1], gt_str_get(nucl_codon)[2]) != 0) && (gt_trans_table_is_stop_codon(trans_t,gt_str_get(nucl_codon_mut)[0], gt_str_get(nucl_codon_mut)[1], gt_str_get(nucl_codon_mut)[2]) == 0)) {
             resultset_set_nons(r,1); 
-          } else {
-            printf("SHIT THE BED\n");
-          }
+          } 
           
           gt_str_reset(nucl_codon);
           gt_str_reset(nucl_codon_mut);
