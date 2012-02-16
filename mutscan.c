@@ -188,9 +188,7 @@ unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
       
       if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {
         /* adding mrna_id to resultset to enable subsequent functions to skip non-exonic variations */
-
-        
-        
+        resultset_set_exon(r,(unsigned long)1);
         resultset_add_mrna_id(r, mutgene_get_id(mrna_elem));        
       } 
       mrna_child_elem = NULL;

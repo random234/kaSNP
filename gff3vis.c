@@ -189,9 +189,10 @@ unsigned long get_description_file_number(GtStrArray *desc, GtStr *seqid) {
 
 void gt_gff3_vis_free(GtNodeVisitor *nv)
 {
-  GT_UNUSED GtGff3Vis *v;
+  GtGff3Vis *v;
   if (!nv) return;
   v = gt_gff3_vis_cast(nv);
+  vcfoutput_delete(v->vcf_out);
   //gt_str_array_delete(v->sa);
   //~ gt_str_delete(v->fas_file);
 }

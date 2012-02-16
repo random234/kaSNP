@@ -23,6 +23,7 @@ struct ResultSet{
   GtStr *id;
   
   /* in_exon results */
+  unsigned long exon;
   GtStrArray *mrna_ids;
     
   /* frame shift results */
@@ -73,6 +74,16 @@ void resultset_set_id(ResultSet *r, GtStr *i) {
 GtStr * resultset_get_id(ResultSet *r) {
   gt_assert(r);
   return r->id;
+}
+
+void resultset_set_exon(ResultSet *r, unsigned long e) {
+  gt_assert(r);
+  r->exon = e;
+}
+
+unsigned long resultset_get_exon(ResultSet *r) {
+  gt_assert(r);
+  return r->exon;
 }
 
 void resultset_set_gene_name(ResultSet *r, GtStr *gn) {
