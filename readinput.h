@@ -3,7 +3,7 @@
 
 
 
-int read_input(const char *, const char *, const char *, unsigned long);
+int read_input(const char *, const char *, const char *, const char *, unsigned long);
 
 
 

@@ -14,7 +14,7 @@
 #include "core/readmode_api.h"
 #include "gff3vis.h"
 #include "mutscan.h"
-
+#include "vcfoutput.h"
 
 
 
@@ -22,6 +22,7 @@ struct GtGff3Vis {
   const GtNodeVisitor parent_instance;
   GtTokenizer *vcf_token;
   GtEncseq *encseq;
+  VcfOutput *vcf_out;
   GtEncseqLoader *encseq_load;
     
   unsigned long splice_site_range;
@@ -141,9 +142,9 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
         //~ if(!mutscan_init(mut, vcf_arr, node))
           //~ break;
         
-        printf("%lu",v->splice_site_range);
+        //~ printf("%lu",v->splice_site_range);
         mutscan_init(mut, vcf_arr, chrom_file, node, v->encseq, encseq_read);
-        mutscan_start_scan(mut);
+        vcfoutput_write(v->vcf_out,mutscan_start_scan(mut));
         
         mutscan_reset(mut);
         
@@ -210,7 +211,7 @@ const GtNodeVisitorClass* gt_gff3_vis_class()
   return nvc;
 }
 
-GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *encseq_file, unsigned long splice_site_range)
+GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *encseq_file, const char *out_file, unsigned long splice_site_range)
 {
   GtError *err;
   err = gt_error_new();
@@ -218,6 +219,8 @@ GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *encseq_file, 
   GtNodeVisitor *nv;
   nv = gt_node_visitor_create(gt_gff3_vis_class());
   mfv = gt_gff3_vis_cast(nv);
+  mfv->vcf_out = vcfoutput_new();
+  vcfoutput_init(mfv->vcf_out, out_file);
   mfv->vcf_token = vcf_token;
   mfv->encseq_load = gt_encseq_loader_new();
   mfv->encseq = gt_encseq_loader_load(mfv->encseq_load,gt_str_get(encseq_file), err);

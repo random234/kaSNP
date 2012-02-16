@@ -14,10 +14,10 @@ VcfOutput* vcfoutput_new(void) {
   return v;
 }
 
-void vcfoutput_init(VcfOutput *v, GtStr *of) {
+void vcfoutput_init(VcfOutput *v, const char *of) {
   gt_assert(v);
   gt_assert(of);
-  v->outfile = of;
+  gt_str_set(v->outfile,of);
 }
 
 void vcfoutput_write(VcfOutput *v, ResultSet *r) {
