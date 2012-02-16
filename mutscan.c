@@ -305,6 +305,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
         
         if(resultset_get_var_pos(r) < mutgene_get_rng_end(mrna_child_elem) && resultset_get_var_pos(r) > mutgene_get_rng_start(mrna_child_elem)) {
           range = mutgene_get_rng_end(mrna_child_elem) - mutgene_get_rng_start(mrna_child_elem);
+          range = range+4;
           printf("Start of exon: %lu Range: %lu\n",mutgene_get_rng_start(mrna_child_elem),range);
       
           for(k=0;k<range;k++){
@@ -312,7 +313,12 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
           }
           resultset_add_dna_seq(r, dna_seq);
 
-          rel_var_pos = resultset_get_var_pos(r) - mutgene_get_rng_start(mrna_child_elem) + mutgene_get_phase(mrna_child_elem);
+          if(mutgene_get_phase(mrna_child_elem) != 3) {
+            rel_var_pos = resultset_get_var_pos(r) - mutgene_get_rng_start(mrna_child_elem) + mutgene_get_phase(mrna_child_elem);
+          } else {
+            rel_var_pos = resultset_get_var_pos(r) - mutgene_get_rng_start(mrna_child_elem);
+          }
+          
           //~ printf("Variation pos: %lu\n",resultset_get_var_pos(r));
           //~ printf("Relative Variation pos: %lu\n",rel_var_pos);
           //~ printf("DNA_SEQ: %s\n", gt_str_get(dna_seq));
@@ -321,6 +327,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
           gt_str_append_char(nucl_codon,gt_str_get(dna_seq)[rel_var_pos+1]);
           gt_str_append_char(nucl_codon,gt_str_get(dna_seq)[rel_var_pos+2]);
           printf("Orig Codon: %s \n",gt_str_get(nucl_codon));
+          
           if(gt_trans_table_translate_codon(trans_t,gt_str_get(nucl_codon)[0], gt_str_get(nucl_codon)[1], gt_str_get(nucl_codon)[2], &amino, m->err)== 0) {
             printf("ORIGINAL AMINOACID: %c \n",amino);        
           } else {
