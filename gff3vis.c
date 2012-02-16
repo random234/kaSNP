@@ -171,6 +171,7 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   gt_str_array_delete(vcf_arr);
   gt_splitter_delete(vcf_split);
   gt_splitter_delete(desc_split);
+  mutscan_delete(mut);
   return had_err;
 }
 

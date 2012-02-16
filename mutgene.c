@@ -132,9 +132,17 @@ void mutgene_add_content(MutGene *g, GtStr *i, GtStr *gn, GtStr *t, unsigned lon
 
 
 void mutgene_reset(MutGene *g) {
-  gt_assert(g);  
+  gt_assert(g);
 }
 
 void mutgene_delete(MutGene *g) {
-  gt_free(g);  
+  //~ unsigned long i = 0;
+  gt_free(g->id);
+  gt_free(g->gene_name);
+  gt_free(g->type);  
+  //~ for(i=0;i<gt_array_size(mutgene_get_children_array(g));i++){ 
+    //~ mutgene_delete(gt_array_get(mutgene_get_children_array(g),i));
+  //~ }
+  gt_free(g->children);
+  gt_free(g);
 }
