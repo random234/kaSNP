@@ -39,6 +39,7 @@ unsigned long mutscan_utr(MutScan *mut, ResultSet*);
 /* intron mutation detection */
 unsigned long mutscan_exon(MutScan *mut, ResultSet*);
 
+unsigned long switch_miss(char);
 
 void mutscan_reset(MutScan *mut);
 

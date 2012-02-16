@@ -266,7 +266,7 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
         }
       }
     } else {
-      printf("No CDS in mrna\n");
+      //~ printf("No CDS in mrna\n");
     }
     
     mrna_elem = NULL;
@@ -328,7 +328,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
           } else {
             gt_error_set(m->err,"error during ORIGINAL AA translation");
           }
-        
+          
           temp_arr = gt_str_new_cstr(gt_str_array_get(resultset_get_vcf_array(r),4));        
           gt_splitter_split(alt_split, gt_str_get(temp_arr),gt_str_length(temp_arr), ',');
           printf("splitter size %lu: \n",gt_splitter_size(alt_split));
@@ -353,7 +353,15 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
             /* check for nonsense mutations */
             if((gt_trans_table_is_stop_codon(trans_t,gt_str_get(nucl_codon)[0], gt_str_get(nucl_codon)[1], gt_str_get(nucl_codon)[2]) != 0) && (gt_trans_table_is_stop_codon(trans_t,gt_str_get(nucl_codon_mut)[0], gt_str_get(nucl_codon_mut)[1], gt_str_get(nucl_codon_mut)[2]) == 0)) {
               resultset_set_nons(r,1); 
-            } 
+            } else {
+              /* check for missense mutation */
+              if(switch_miss(amino) != switch_miss(amino_mut)) {
+                resultset_set_miss(r,1);
+                printf("detected missense mutation\n");
+              } else {
+                printf("ref %lu alt %lu",switch_miss(amino),switch_miss(amino_mut));
+              }
+            }
           
             gt_str_reset(nucl_codon);
             gt_str_reset(nucl_codon_mut);
@@ -364,7 +372,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
           mrna_child_elem = NULL;
         }      
       } else {
-        printf("No CDS in mrna\n");
+        //~ printf("No CDS in mrna\n");
       }
     }
     mrna_elem = NULL;
@@ -393,7 +401,37 @@ unsigned long mutscan_splice(MutScan *m, GT_UNUSED ResultSet *r){
   return had_err;
 }
 
-
+unsigned long switch_miss(char amino) {
+  unsigned long ret = 0;
+  switch (amino) {
+    /* nonpolar 1 */
+    case 'F' : ret = 1; break;
+    case 'L' : ret = 1; break;
+    case 'I' : ret = 1; break;
+    case 'V' : ret = 1; break;
+    case 'P' : ret = 1; break;
+    case 'A' : ret = 1; break;
+    case 'W' : ret = 1; break;
+    
+    /* polar 2 */
+    case 'S' : ret = 2; break;
+    case 'T' : ret = 2; break;
+    case 'Y' : ret = 2; break;
+    case 'Q' : ret = 2; break;
+    case 'N' : ret = 2; break;
+    case 'G' : ret = 2; break;
+    
+    /* basic 3 */
+    case 'H' : ret = 3; break;
+    case 'R' : ret = 3; break;
+    case 'K' : ret = 3; break;
+     
+    /* acidic 4 */
+    case 'D' : ret = 4; break;
+    case 'E' : ret = 4; break;
+  }
+  return ret;
+}
 
 
 void mutscan_reset(MutScan *mut) {
