@@ -11,8 +11,6 @@
 #include "core/splitter_api.h"
 #include "core/phase_api.h"
 #include "core/translator_api.h"
-#include "core/codon_iterator_api.h"
-#include "core/codon_iterator_simple_api.h"
 #include "core/trans_table_api.h"
 #include "mutscan.h"
 #include "mutgene.h"
