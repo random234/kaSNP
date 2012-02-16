@@ -14,7 +14,7 @@ typedef struct GtGff3Vis GtGff3Vis;
 //GtNodeVisitor*            gt_my_feature_visitor_new(void);
 
 const GtNodeVisitorClass* gt_gff3_vis_class(void);
-GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *, GtStr *, unsigned long);
+GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *, GtStr *, const char *, unsigned long);
 unsigned long get_description_file_number(GtStrArray *, GtStr *);
 
 #endif

@@ -156,7 +156,7 @@ ResultSet* mutscan_start_scan(MutScan *m) {
   mutscan_miss(m, r);
   
   printf("\n");
-  return 0;
+  return r;
 }
 
 unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
@@ -171,20 +171,20 @@ unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
   GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
   for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
     MutGene *mrna_elem = gt_array_get(mrna_arr, i);
-        printf("ID: %s\t",gt_str_get(mutgene_get_id(mrna_elem)));
-        printf("Genename: %s\t",gt_str_get(mutgene_get_gene_name(mrna_elem)));
-        printf("Type: %s\n",gt_str_get(mutgene_get_type(mrna_elem)));
+        //~ printf("ID: %s\t",gt_str_get(mutgene_get_id(mrna_elem)));
+        //~ printf("Genename: %s\t",gt_str_get(mutgene_get_gene_name(mrna_elem)));
+        //~ printf("Type: %s\n",gt_str_get(mutgene_get_type(mrna_elem)));
     
     GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
     for(j=0;j<gt_array_size(mrna_child_arr);j++){
       MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
-            printf("%s \t",gt_str_get(mutgene_get_type(mrna_child_elem)));
-      printf("%lu \t",mutgene_get_rng_start(mrna_child_elem));
-      printf("%lu \t",mutgene_get_rng_end(mrna_child_elem));
-      printf("%lu \t",mutgene_get_phase(mrna_child_elem));
-        printf("ID: %s\t",gt_str_get(mutgene_get_id(mrna_child_elem)));
-        printf("Genename: %s\t",gt_str_get(mutgene_get_gene_name(mrna_child_elem)));
-      printf("Type: %s\n",gt_str_get(mutgene_get_type(mrna_child_elem)));
+            //~ printf("%s \t",gt_str_get(mutgene_get_type(mrna_child_elem)));
+      //~ printf("%lu \t",mutgene_get_rng_start(mrna_child_elem));
+      //~ printf("%lu \t",mutgene_get_rng_end(mrna_child_elem));
+      //~ printf("%lu \t",mutgene_get_phase(mrna_child_elem));
+        //~ printf("ID: %s\t",gt_str_get(mutgene_get_id(mrna_child_elem)));
+        //~ printf("Genename: %s\t",gt_str_get(mutgene_get_gene_name(mrna_child_elem)));
+      //~ printf("Type: %s\n",gt_str_get(mutgene_get_type(mrna_child_elem)));
       
       if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {
         /* adding mrna_id to resultset to enable subsequent functions to skip non-exonic variations */

@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     const char *out_file;
     unsigned long splice_site_range;
     
-    if (argc<5)
+    if (argc<6)
 	{
 		fprintf(stderr,"Usage: %s [GFF3 file] [FASTA file] [VCF file] [OUTPUT VCF file] [Splice Site interval]\n", argv[0]);
 		exit(EXIT_FAILURE);
