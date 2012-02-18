@@ -43,6 +43,7 @@ ResultSet* resultset_new(void) {
   r->frms = 0;
   r->miss = 0;
   r->nons = 0;
+  r->exon = 0;
   return r;
 }
 
@@ -157,4 +158,26 @@ void resultset_set_nons(ResultSet *r, unsigned long i) {
 unsigned long resultset_get_nons(ResultSet *r) {
   gt_assert(r);
   return r->miss;
+}
+
+void resultset_reset(ResultSet *r){
+  gt_assert(r);  
+  gt_str_array_reset(r->vcf_arr);
+  gt_str_array_reset(r->mrna_ids);
+  gt_str_array_reset(r->dna_seqs);
+  r->frms = 0;
+  r->miss = 0;
+  r->nons = 0;
+  r->exon = 0;  
+}
+
+void resultset_delete(ResultSet *r) {
+  gt_assert(r);  
+  //~ gt_str_array_delete(r->vcf_arr);
+  //~ gt_str_array_delete(r->mrna_ids);
+  //~ gt_str_array_delete(r->dna_seqs);
+  //gt_free(r->vcf_arr);
+  //~ gt_free(r->mrna_ids);
+  //~ gt_free(r->dna_seqs);
+ // gt_free(r);
 }

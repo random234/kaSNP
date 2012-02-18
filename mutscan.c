@@ -20,7 +20,8 @@ struct MutScan {
   GtStrArray *vcf_arr;
   unsigned long file_chromosome; /* chromosome file mapping for desc file */
   unsigned long splice_site_interval;
-  MutGene *mut_gene;  
+  MutGene *mut_gene;
+  ResultSet *result;
   GtEncseq *encseq;
   GtEncseqReader *encseq_read;
   GtError *err; 
@@ -30,9 +31,10 @@ struct MutScan {
         "012."
 
 MutScan* mutscan_new(void) {
-  MutScan *m = gt_malloc(sizeof *m);  
+  MutScan *m = gt_malloc(sizeof *m);
   m->splice_site_interval = 0;
   m->err = gt_error_new();
+  m->result = resultset_new();
   return m;
 }
 
@@ -65,6 +67,18 @@ void mutscan_set_splice_site_interval(MutScan *m, unsigned long s) {
   gt_assert(m);
   m->splice_site_interval = s;
 }
+
+ResultSet* mutscan_get_resultset(MutScan *m) {
+  gt_assert(m);
+  return m->result;
+}
+
+void mutscan_set_resultset(MutScan *m, ResultSet *r) {
+  gt_assert(m);
+  gt_assert(r);
+  m->result = r;
+}
+
 
 unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, unsigned long file_chrom, GtFeatureNode *fn, GtEncseq *en, GtEncseqReader *rd) {
   mut->vcf_arr = vcf;
@@ -131,25 +145,25 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, unsigned long file_chr
 
 ResultSet* mutscan_start_scan(MutScan *m) {
   //~ int i = 0;
-  ResultSet *r = resultset_new();
+  //~ ResultSet *r = resultset_new();
   
   /* check for mutations in introns */
   /* maybe checking for mutations in exons may be more useful as one could use the information to stop some function calls of subsequent analysis */  
-  mutscan_exon(m,r);
+  mutscan_exon(m, mutscan_get_resultset(m));
   //~ for(i=0;i<gt_str_array_size(exon_res);i++) {
     //~ printf("%s \t",gt_str_array_get(exon_res, i));
   //~ }
   //~ printf("\n");
   
   /* check for mutations in frames */
-  mutscan_frame(m, r);
+  mutscan_frame(m, mutscan_get_resultset(m));
   //~ for(i=0;i<gt_str_array_size(frame_res);i++) {
     //~ printf("%s \t",gt_str_array_get(frame_res, i));
   //~ }
-  mutscan_miss(m, r);
+  mutscan_miss(m, mutscan_get_resultset(m));
   
   //~ printf("\n");
-  return r;
+  return mutscan_get_resultset(m);
 }
 
 unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
@@ -184,9 +198,11 @@ unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
         resultset_set_exon(r,(unsigned long)1);
         resultset_add_mrna_id(r, mutgene_get_id(mrna_elem));        
       } 
-      mrna_child_elem = NULL;
+      //mutgene_reset(mrna_child_elem);
+      //mrna_child_elem = NULL;
     }
-    mrna_elem = NULL;
+    //mutgene_reset(mrna_elem);
+    //mrna_elem = NULL;
   }
   return had_err;
 }
@@ -262,6 +278,14 @@ unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
     
     mrna_elem = NULL;
   }
+  
+  gt_str_array_delete(ref);
+  gt_str_delete(ref_temp);
+  gt_str_delete(alt_temp);
+  gt_str_array_delete(alt);  
+  gt_splitter_delete(ref_split);
+  gt_splitter_delete(alt_split);
+  
   return had_err;
 }
 
@@ -373,8 +397,12 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
         //~ printf("No CDS in mrna\n");
       }
     }
-    mrna_elem = NULL;
-  }
+    //mrna_elem = NULL;
+  }  
+  gt_str_delete(dna_seq);
+  gt_splitter_delete(alt_split);
+  gt_str_delete(nucl_codon);
+  gt_str_delete(nucl_codon_mut);
   return had_err;
 }
 
@@ -436,6 +464,8 @@ void mutscan_reset(MutScan *m) {
   gt_assert(m);
   gt_str_array_reset(m->vcf_arr);  
   mutgene_delete(m->mut_gene);  
+  resultset_reset(m->result);
+  
   //gt_error_delete(m->err);  
   //~ gt_genome_node_delete((GtGenomeNode*)mut->node);
 }
@@ -443,6 +473,8 @@ void mutscan_reset(MutScan *m) {
 void mutscan_delete(MutScan *m) {
   //gt_free(m->vcf_arr);
   //mutgene_delete(m->mut_gene);
+  //resultset_delete(m->result);
+  gt_free(m->result);
   gt_free(m->err);
   gt_free(m);  
 }

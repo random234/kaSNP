@@ -43,4 +43,6 @@ void mutgene_reset(MutGene*);
 
 void mutgene_delete(MutGene*);
 
+void mutgene_delete_elememt(MutGene*);
+
 #endif

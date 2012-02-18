@@ -42,7 +42,9 @@ int read_input(const char * gff_file, const char *vcf_file_input, const char *en
   gt_node_stream_delete(visitor_stream);
   gt_node_stream_delete(in_stream);
   gt_tokenizer_delete(vcf_token);
-    
+  gt_error_delete(err);  
+  gt_str_delete(encseq_file);
+  //~ gt_io_delete(vcf_io);  
   
   if (gt_lib_clean())
     return GT_EXIT_PROGRAMMING_ERROR; /* programmer error */

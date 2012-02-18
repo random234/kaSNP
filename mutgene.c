@@ -136,13 +136,28 @@ void mutgene_reset(MutGene *g) {
 }
 
 void mutgene_delete(MutGene *g) {
-  //~ unsigned long i = 0;
+  unsigned long i,j = 0;  
+  
+  
+  for(i=0;i<gt_array_size(g->children);i++){
+    MutGene *mrna_elem = gt_array_get(g->children, i);
+    GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
+    for(j=0;j<gt_array_size(mrna_child_arr);j++) {
+      MutGene *mrna_child = gt_array_get(mrna_child_arr, j);            
+      mutgene_delete_elememt(mrna_child);
+    }    
+    mutgene_delete_elememt(mrna_elem);
+  }
   gt_free(g->id);
   gt_free(g->gene_name);
-  gt_free(g->type);  
-  //~ for(i=0;i<gt_array_size(mutgene_get_children_array(g));i++){ 
-    //~ mutgene_delete(gt_array_get(mutgene_get_children_array(g),i));
-  //~ }
+  gt_free(g->type);
   gt_free(g->children);
   gt_free(g);
+}
+
+void mutgene_delete_elememt(MutGene *g) {
+  gt_free(g->id);
+  gt_free(g->gene_name);
+  gt_free(g->type);
+  //gt_free(g->children);
 }

@@ -20,6 +20,10 @@ unsigned long mutscan_get_splice_site_interval(MutScan *);
 
 void mutscan_set_splice_site_interval(MutScan *, unsigned long);
 
+ResultSet* mutscan_get_resultset(MutScan *);
+
+void mutscan_set_resultset(MutScan *, ResultSet*);
+
 unsigned long mutscan_init(MutScan *, GtStrArray *,unsigned long, GtFeatureNode *,GtEncseq *,GtEncseqReader *);
 
 ResultSet* mutscan_start_scan(MutScan *);

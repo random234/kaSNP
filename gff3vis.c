@@ -168,11 +168,13 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   }
   gt_feature_node_iterator_delete(fni);
   gt_str_delete(line);
+  gt_str_delete(temp);
   gt_str_array_delete(vcf_arr);
+  gt_str_array_delete(desc_arr);
   gt_splitter_delete(vcf_split);
   gt_splitter_delete(desc_split);
-  mutscan_delete(mut);
-  return had_err;
+  mutscan_delete(mut);  
+  return had_err; 
 }
 
 unsigned long get_description_file_number(GtStrArray *desc, GtStr *seqid) {

@@ -47,4 +47,7 @@ void resultset_set_nons(ResultSet *, unsigned long);
 
 unsigned long resultset_get_nons(ResultSet *);
 
+void resultset_reset(ResultSet *);
+
+void resultset_delete(ResultSet *);
 #endif
