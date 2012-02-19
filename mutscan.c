@@ -87,26 +87,30 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, unsigned long file_chr
   mut->mut_gene = gene;
   mut->encseq = en;
   mut->encseq_read = rd;     
-  GtFeatureNode *node, *child;    
+  GtFeatureNode *node;
+  //~ , *child;    
   GtFeatureNodeIterator *fni;
-  GtFeatureNodeIterator *fni_child;  
-  GtRange rng_fn = gt_genome_node_get_range((GtGenomeNode*) fn);  
-  mutgene_add_content(mut->mut_gene, gt_str_new_cstr(gt_feature_node_get_attribute(fn,"id")), gt_str_new_cstr(gt_feature_node_get_attribute(fn,"name")) ,gt_str_new_cstr(gt_feature_node_get_type(fn)),rng_fn.start,rng_fn.end, gt_feature_node_get_phase(fn));
+  //~ GtFeatureNodeIterator *fni_child;  
+  GtRange rng_fn = gt_genome_node_get_range((GtGenomeNode*) fn);
+  
+    //~ printf("\t Genename:%s\n", gt_feature_node_get_attribute(fn,"Name"));
+    //~ printf("\t Id:%s\n\n", gt_feature_node_get_attribute(fn,"ID"));
+  
+  mutgene_add_content(mut->mut_gene, gt_feature_node_get_attribute(fn,"ID"), gt_feature_node_get_attribute(fn,"Name") ,gt_feature_node_get_type(fn),rng_fn.start,rng_fn.end, gt_feature_node_get_phase(fn));
     
   /* get all mRNA entries in current gene */
   fni =  gt_feature_node_iterator_new_direct(fn);
   while ((node = gt_feature_node_iterator_next(fni))) {
-    GtRange rng_node = gt_genome_node_get_range((GtGenomeNode*) node);
+    //~ GtRange rng_node = gt_genome_node_get_range((GtGenomeNode*) node);
     
     /* create new child elem from current node */
-    MutGene *mut_child_elem;
-    mut_child_elem = mutgene_new();
-    
-    //~ printf("\t Genename:%s\n\n", gt_feature_node_get_attribute(node,"Name"));
-    mutgene_add_content(mut_child_elem, gt_str_new_cstr(gt_feature_node_get_attribute(node,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(node,"Name")) , gt_str_new_cstr(gt_feature_node_get_type(node)),rng_node.start,rng_node.end, gt_feature_node_get_phase(node));
+    //~ MutGene *mut_child_elem;
+    //~ mut_child_elem = mutgene_new();
+
+    //~ mutgene_add_content(mut_child_elem, gt_feature_node_get_attribute(node,"ID"), gt_feature_node_get_attribute(node,"Name") , gt_feature_node_get_type(node),rng_node.start,rng_node.end, gt_feature_node_get_phase(node));
     
     /* add new child elem to parent object */    
-    mutgene_add_child(mut->mut_gene,mut_child_elem);
+    //~ mutgene_add_child(mut->mut_gene,mut_child_elem);
         
     //~ printf("MRNACHILD: type: %s, %lu-%lu, seqid %s\n",
       //~ gt_feature_node_get_type(node),
@@ -115,30 +119,31 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, unsigned long file_chr
       //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));        
     
       //~ /* get all exon & CDS entries in current gene */
-      fni_child = gt_feature_node_iterator_new_direct(node);      
-      while ((child = gt_feature_node_iterator_next(fni_child))) {
-        GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
+      //~ fni_child = gt_feature_node_iterator_new_direct(node);      
+      //~ while ((child = gt_feature_node_iterator_next(fni_child))) {
+        //~ GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
         
-        /* create new child elem for children of current node */        
-        MutGene *mut_child_of_child_elem;
-        mut_child_of_child_elem = mutgene_new();
-        mutgene_add_content(mut_child_of_child_elem, gt_str_new_cstr(gt_feature_node_get_attribute(child,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(child,"Name")), gt_str_new_cstr(gt_feature_node_get_type(child)),rng_child.start,rng_child.end, gt_feature_node_get_phase(child));
+        //~ /* create new child elem for children of current node */        
+        //~ MutGene *mut_child_of_child_elem;
+        //~ mut_child_of_child_elem = mutgene_new();
+        //~ mutgene_add_content(mut_child_of_child_elem, gt_feature_node_get_attribute(child,"ID"), gt_feature_node_get_attribute(child,"Name"), gt_feature_node_get_type(child),rng_child.start,rng_child.end, gt_feature_node_get_phase(child));
 
-        /* add new child elem to parent object */    
-        mutgene_add_child(mut_child_elem,mut_child_of_child_elem);
+        //~ /* add new child elem to parent object */    
+        //~ mutgene_add_child(mut_child_elem,mut_child_of_child_elem);
         
-        //~ printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
+        //~ /* printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
           //~ gt_feature_node_get_type(child),
           //~ rng_child.start,
           //~ rng_child.end,
           //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)),
           //~ gt_feature_node_get_phase(child));    
         
-        //~ mutgene_delete(mut_child_of_child_elem);
-      }
+        //~ mutgene_delete(mut_child_of_child_elem); */
+      //~ }
+      //~ gt_feature_node_iterator_delete(fni_child);
       //~ mutgene_delete(mut_child_elem);
   }
-  
+  gt_feature_node_iterator_delete(fni);
   return 0;
 }
 
@@ -149,18 +154,18 @@ ResultSet* mutscan_start_scan(MutScan *m) {
   
   /* check for mutations in introns */
   /* maybe checking for mutations in exons may be more useful as one could use the information to stop some function calls of subsequent analysis */  
-  mutscan_exon(m, mutscan_get_resultset(m));
+  //~ mutscan_exon(m, mutscan_get_resultset(m));
   //~ for(i=0;i<gt_str_array_size(exon_res);i++) {
     //~ printf("%s \t",gt_str_array_get(exon_res, i));
   //~ }
   //~ printf("\n");
   
   /* check for mutations in frames */
-  mutscan_frame(m, mutscan_get_resultset(m));
+  //~ mutscan_frame(m, mutscan_get_resultset(m));
   //~ for(i=0;i<gt_str_array_size(frame_res);i++) {
     //~ printf("%s \t",gt_str_array_get(frame_res, i));
   //~ }
-  mutscan_miss(m, mutscan_get_resultset(m));
+  //~ mutscan_miss(m, mutscan_get_resultset(m));
   
   //~ printf("\n");
   return mutscan_get_resultset(m);
@@ -472,7 +477,7 @@ void mutscan_reset(MutScan *m) {
 
 void mutscan_delete(MutScan *m) {
   //gt_free(m->vcf_arr);
-  //mutgene_delete(m->mut_gene);
+  //~ mutgene_delete(m->mut_gene);
   //resultset_delete(m->result);
   gt_free(m->result);
   gt_free(m->err);

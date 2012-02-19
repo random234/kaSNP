@@ -7,15 +7,15 @@ MutGene* mutgene_new(void);
 
 GtStr* mutgene_get_id(MutGene *);
 
-void mutgene_set_id(MutGene *, GtStr *);
+void mutgene_set_id(MutGene *, const char *);
 
 GtStr* mutgene_get_gene_name(MutGene *);
 
-void mutgene_set_gene_name(MutGene *, GtStr *);
+void mutgene_set_gene_name(MutGene *, const char *);
 
 GtStr* mutgene_get_type(MutGene *);
 
-void mutgene_set_type(MutGene *, GtStr *);
+void mutgene_set_type(MutGene *, const char *);
 
 unsigned long mutgene_get_rng_start(MutGene*);
 
@@ -37,7 +37,7 @@ GtArray* mutgene_get_children_array(MutGene *);
 
 void mutgene_add_child(MutGene*, MutGene*);
 
-void mutgene_add_content(MutGene*,GtStr*, GtStr*, GtStr*, unsigned long, unsigned long, unsigned long);
+void mutgene_add_content(MutGene*,const char*, const char*, const char*, unsigned long, unsigned long, unsigned long);
 
 void mutgene_reset(MutGene*);
 

@@ -43,9 +43,11 @@ GtStr* mutgene_get_id(MutGene *g) {
   return g->id;  
 }
 
-void mutgene_set_id(MutGene *g, GtStr *i) {
+void mutgene_set_id(MutGene *g, const char *i) {
   gt_assert(g);
-  g->id = i;  
+  if(i != NULL) {
+    gt_str_append_cstr(g->id,i);  
+  }
 }
 
 GtStr* mutgene_get_gene_name(MutGene *g) {
@@ -53,9 +55,11 @@ GtStr* mutgene_get_gene_name(MutGene *g) {
   return g->gene_name;  
 }
 
-void mutgene_set_gene_name(MutGene *g, GtStr *gn) {
+void mutgene_set_gene_name(MutGene *g, const char *gn) {
   gt_assert(g);
-  g->gene_name = gn;  
+  if(gn != NULL) {
+    gt_str_append_cstr(g->gene_name,gn);
+  }
 }
 
 GtStr* mutgene_get_type(MutGene *g) {
@@ -63,9 +67,11 @@ GtStr* mutgene_get_type(MutGene *g) {
   return g->type;  
 }
 
-void mutgene_set_type(MutGene *g, GtStr *t) {
+void mutgene_set_type(MutGene *g, const char *t) {
   gt_assert(g);
-  g->type = t;  
+  if(t != NULL) {
+    gt_str_append_cstr(g->type,t);
+  }
 }
 
 unsigned long mutgene_get_rng_start(MutGene *g) {
@@ -121,7 +127,7 @@ void mutgene_add_child(MutGene *g, MutGene *child) {
   //~ printf("%lu",g->child_size);
 }
 
-void mutgene_add_content(MutGene *g, GtStr *i, GtStr *gn, GtStr *t, unsigned long rs, unsigned long re, unsigned long p) {
+void mutgene_add_content(MutGene *g, const char *i, const char *gn, const char *t, unsigned long rs, unsigned long re, unsigned long p) {
   mutgene_set_id(g,i);
   mutgene_set_gene_name(g,gn);
   mutgene_set_type(g,t);
@@ -148,16 +154,25 @@ void mutgene_delete(MutGene *g) {
     }    
     mutgene_delete_elememt(mrna_elem);
   }
-  gt_free(g->id);
-  gt_free(g->gene_name);
-  gt_free(g->type);
-  gt_free(g->children);
+  
+  gt_str_delete(g->id);  
+  gt_str_delete(g->gene_name);
+  gt_str_delete(g->type);
+  //~ gt_free(g->id);
+  //~ gt_free(g->gene_name);
+  //~ gt_free(g->type);
+  gt_array_delete(g->children);
   gt_free(g);
 }
 
 void mutgene_delete_elememt(MutGene *g) {
-  gt_free(g->id);
-  gt_free(g->gene_name);
-  gt_free(g->type);
-  //gt_free(g->children);
+  //~ gt_free(g->id);
+  //~ gt_free(g->gene_name);
+  //~ gt_free(g->type);
+  //~ gt_free(g->children);
+  gt_str_delete(g->id);  
+  gt_str_delete(g->gene_name);
+  gt_str_delete(g->type);
+  gt_array_delete(g->children);  
+  gt_free(g);
 }
