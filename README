@@ -1,0 +1,46 @@
+kaSNP is a program which can be used to classify human variation information supplied in the VCF(Variant Call) format 
+
+-- Installation Instructions
+
+First install a current version of the genometools package which can be obtained from the site http://genometools.org or via git with the following command: git clone git://genometools.org/genometools.git
+
+Follow the installation intructions provided by the package maintainers and make sure to include the gt binary location in your PATH-variable. 
+Attention: you have to specify the -64bit option if you are compiling on a 64 bit system or have compatabilty libraries installed.
+
+Alter the Makefile in the kaSNP directory to point to the path the genometools headers files where installed. For this you have to edit the second line in the Makefile which starts with prefix
+Omit the include directory. For instance if the header files got installed in /usr/local/include/genometools you would specify the directory /usr/local/
+
+compile kaSNP by typing make
+
+If everything worked you should now have a executable called kasnp
+
+
+-- Preparing to run kaSNP
+
+There are a few preparations necessary in order to run kaSNP:
+- First you need a sorted GFF3 Annotation File for the sequences you want to scan for Variations
+  - you can obtain one by downloading a GTF Annotation file from http://www.ensembl.org/info/data/ftp/index.html
+  - after obtaining the file you have to convert it to GFF3(you may want to use a tool from the genometools package)
+    The following line will convert the file using genometools functions: gt gtf_to_gff3 file.gtf > file.gff3 
+  - Then you have to sort the file a task which can also be done using the genometools package
+    The following line will sort the file for you: gt gff3 -tidy -sort file.gff3 > file.sorted.gff3
+    
+- You will also need the fasta sequences referenced by the GTF file
+  - you can obtain these by downloading them from http://www.ensembl.org/info/data/ftp/index.html
+  - in order to save space and speed up the classification process these files will then be encoded by another tool supplied 
+    by the genometools package
+    The following line will encode your sequences: gt encseq encode -dna -lossless -indexname MY_NEW_INDEX sequence_files*
+      - You have to pick a name for MY_NEW_INDEX
+      - You can either specify all sequence files one after another, or considering you downloaded them from the server mentioned
+      above use a wildcard to let your OS figure out which files you want to include
+      - After the encoding you will have 5 new files which will be needed by kaSNP
+      
+-- Running kaSNP
+  - You can start kaSNP by executing the kasnp executable which will specify the input you need to supply
+    The following line will give you an idea how to execute the program: ./kasnp file.sorted.gff3 my_new_index 
+    my_variation_file.vcf 5
+    - please note that you have to specify the index without any file extension and supply a number for the splice_site_range 
+    here 5
+    
+
+
