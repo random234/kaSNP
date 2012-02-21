@@ -87,30 +87,29 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, unsigned long file_chr
   mut->mut_gene = gene;
   mut->encseq = en;
   mut->encseq_read = rd;     
-  GtFeatureNode *node;
-  //~ , *child;    
+  GtFeatureNode *node, *child;    
   GtFeatureNodeIterator *fni;
-  //~ GtFeatureNodeIterator *fni_child;  
+  GtFeatureNodeIterator *fni_child;  
   GtRange rng_fn = gt_genome_node_get_range((GtGenomeNode*) fn);
   
-    //~ printf("\t Genename:%s\n", gt_feature_node_get_attribute(fn,"Name"));
-    //~ printf("\t Id:%s\n\n", gt_feature_node_get_attribute(fn,"ID"));
+    printf("\t Genename:%s\n", gt_feature_node_get_attribute(fn,"Name"));
+    printf("\t Id:%s\n\n", gt_feature_node_get_attribute(fn,"ID"));
   
-  mutgene_add_content(mut->mut_gene, gt_feature_node_get_attribute(fn,"ID"), gt_feature_node_get_attribute(fn,"Name") ,gt_feature_node_get_type(fn),rng_fn.start,rng_fn.end, gt_feature_node_get_phase(fn));
+ mutgene_add_content(mut->mut_gene, gt_str_new_cstr(gt_feature_node_get_attribute(fn,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(fn,"Name")) ,gt_str_new_cstr(gt_feature_node_get_type(fn)),rng_fn.start,rng_fn.end, gt_feature_node_get_phase(fn));
     
   /* get all mRNA entries in current gene */
   fni =  gt_feature_node_iterator_new_direct(fn);
   while ((node = gt_feature_node_iterator_next(fni))) {
-    //~ GtRange rng_node = gt_genome_node_get_range((GtGenomeNode*) node);
+    GtRange rng_node = gt_genome_node_get_range((GtGenomeNode*) node);
     
-    /* create new child elem from current node */
-    //~ MutGene *mut_child_elem;
-    //~ mut_child_elem = mutgene_new();
+    //~ /* create new child elem from current node */
+    MutGene *mut_child_elem;
+    mut_child_elem = mutgene_new();
 
-    //~ mutgene_add_content(mut_child_elem, gt_feature_node_get_attribute(node,"ID"), gt_feature_node_get_attribute(node,"Name") , gt_feature_node_get_type(node),rng_node.start,rng_node.end, gt_feature_node_get_phase(node));
+    mutgene_add_content(mut_child_elem, gt_str_new_cstr(gt_feature_node_get_attribute(node,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(node,"Name")) , gt_str_new_cstr(gt_feature_node_get_type(node)),rng_node.start,rng_node.end, gt_feature_node_get_phase(node));
     
-    /* add new child elem to parent object */    
-    //~ mutgene_add_child(mut->mut_gene,mut_child_elem);
+    //~ /* add new child elem to parent object */    
+    mutgene_add_child(mut->mut_gene,mut_child_elem);
         
     //~ printf("MRNACHILD: type: %s, %lu-%lu, seqid %s\n",
       //~ gt_feature_node_get_type(node),
@@ -118,30 +117,30 @@ unsigned long mutscan_init(MutScan *mut, GtStrArray *vcf, unsigned long file_chr
       //~ rng_node.end,
       //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) node)));        
     
-      //~ /* get all exon & CDS entries in current gene */
-      //~ fni_child = gt_feature_node_iterator_new_direct(node);      
-      //~ while ((child = gt_feature_node_iterator_next(fni_child))) {
-        //~ GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
+      /* get all exon & CDS entries in current gene */
+      fni_child = gt_feature_node_iterator_new_direct(node);      
+      while ((child = gt_feature_node_iterator_next(fni_child))) {
+        GtRange rng_child = gt_genome_node_get_range((GtGenomeNode*) child);
         
-        //~ /* create new child elem for children of current node */        
-        //~ MutGene *mut_child_of_child_elem;
-        //~ mut_child_of_child_elem = mutgene_new();
-        //~ mutgene_add_content(mut_child_of_child_elem, gt_feature_node_get_attribute(child,"ID"), gt_feature_node_get_attribute(child,"Name"), gt_feature_node_get_type(child),rng_child.start,rng_child.end, gt_feature_node_get_phase(child));
+        /* create new child elem for children of current node */        
+        MutGene *mut_child_of_child_elem;
+        mut_child_of_child_elem = mutgene_new();
+        mutgene_add_content(mut_child_of_child_elem, gt_str_new_cstr(gt_feature_node_get_attribute(child,"ID")), gt_str_new_cstr(gt_feature_node_get_attribute(child,"Name")), gt_str_new_cstr(gt_feature_node_get_type(child)),rng_child.start,rng_child.end, gt_feature_node_get_phase(child));
 
-        //~ /* add new child elem to parent object */    
-        //~ mutgene_add_child(mut_child_elem,mut_child_of_child_elem);
+        /* add new child elem to parent object */    
+        mutgene_add_child(mut_child_elem,mut_child_of_child_elem);
         
-        //~ /* printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
-          //~ gt_feature_node_get_type(child),
-          //~ rng_child.start,
-          //~ rng_child.end,
-          //~ gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)),
-          //~ gt_feature_node_get_phase(child));    
+        /* printf("CHILD: type: %s, %lu-%lu, seqid %s\t, phase %d\n ",
+          gt_feature_node_get_type(child),
+          rng_child.start,
+          rng_child.end,
+          gt_str_get(gt_genome_node_get_seqid((GtGenomeNode*) child)),
+          gt_feature_node_get_phase(child));    
         
-        //~ mutgene_delete(mut_child_of_child_elem); */
-      //~ }
-      //~ gt_feature_node_iterator_delete(fni_child);
-      //~ mutgene_delete(mut_child_elem);
+        mutgene_delete(mut_child_of_child_elem); */
+      }
+      gt_feature_node_iterator_delete(fni_child);
+      mutgene_delete(mut_child_elem);
   }
   gt_feature_node_iterator_delete(fni);
   return 0;
@@ -154,7 +153,7 @@ ResultSet* mutscan_start_scan(MutScan *m) {
   
   /* check for mutations in introns */
   /* maybe checking for mutations in exons may be more useful as one could use the information to stop some function calls of subsequent analysis */  
-  //~ mutscan_exon(m, mutscan_get_resultset(m));
+  mutscan_exon(m, mutscan_get_resultset(m));
   //~ for(i=0;i<gt_str_array_size(exon_res);i++) {
     //~ printf("%s \t",gt_str_array_get(exon_res, i));
   //~ }
@@ -201,6 +200,7 @@ unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
       if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {
         /* adding mrna_id to resultset to enable subsequent functions to skip non-exonic variations */
         resultset_set_exon(r,(unsigned long)1);
+        printf("%s\n", gt_str_get(mutgene_get_id(mrna_elem)));
         resultset_add_mrna_id(r, mutgene_get_id(mrna_elem));        
       } 
       //mutgene_reset(mrna_child_elem);
@@ -211,6 +211,51 @@ unsigned long mutscan_exon(MutScan *m,  ResultSet *r){
   }
   return had_err;
 }
+
+
+unsigned long mutscan_intron(MutScan *m,  ResultSet *r){
+  unsigned long i,j,had_err = 0;
+  unsigned long var_pos = strtol(gt_str_array_get(mutscan_get_vcf_array(m),1),NULL,0);
+  resultset_set_var_pos(r,var_pos);
+  resultset_set_gene_name(r, mutgene_get_gene_name(mutscan_get_mut_gene(m)));
+  
+  //~ printf("------- mutscan_intron() -------\n");
+  //~ printf("ID: %s\n",gt_str_get(mutgene_get_id(mutscan_get_mut_gene(m))));
+  
+  
+  GtArray *mrna_arr = mutgene_get_children_array(mutscan_get_mut_gene(m));
+  for(i = 0;i < gt_array_size(mutgene_get_children_array(mutscan_get_mut_gene(m)));i++) {
+    MutGene *mrna_elem = gt_array_get(mrna_arr, i);
+        //~ printf("ID: %s\t",gt_str_get(mutgene_get_id(mrna_elem)));
+        //~ printf("Genename: %s\t",gt_str_get(mutgene_get_gene_name(mrna_elem)));
+        //~ printf("Type: %s\n",gt_str_get(mutgene_get_type(mrna_elem)));
+    if(strcmp(gt_str_get(mutgene_get_type(mrna_elem)),"CDS") == 0) {  
+      GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
+      for(j=0;j<gt_array_size(mrna_child_arr);j++){
+        MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
+          //~ printf("%s \t",gt_str_get(mutgene_get_type(mrna_child_elem)));
+      //~ printf("%lu \t",mutgene_get_rng_start(mrna_child_elem));
+      //~ printf("%lu \t",mutgene_get_rng_end(mrna_child_elem));
+      //~ printf("%lu \t",mutgene_get_phase(mrna_child_elem));
+        //~ printf("ID: %s\t",gt_str_get(mutgene_get_id(mrna_child_elem)));
+        //~ printf("Genename: %s\t",gt_str_get(mutgene_get_gene_name(mrna_child_elem)));
+      //~ printf("Type: %s\n",gt_str_get(mutgene_get_type(mrna_child_elem)));
+      
+        if(var_pos >= mutgene_get_rng_start(mrna_child_elem) && var_pos <= mutgene_get_rng_end(mrna_child_elem)) {
+        /* adding mrna_id to resultset to enable subsequent functions to skip non-exonic variations */
+          resultset_set_intron(r,(unsigned long)1);
+          //~ resultset_add_mrna_id(r, mutgene_get_id(mrna_elem));        
+        } 
+      //mutgene_reset(mrna_child_elem);
+      //mrna_child_elem = NULL;
+      }
+    }
+    //mutgene_reset(mrna_elem);
+    //mrna_elem = NULL;
+  }
+  return had_err;
+}
+
 
 unsigned long mutscan_frame(MutScan *m, ResultSet *r) {
   unsigned long i,j,k,had_err = 0;
@@ -322,7 +367,7 @@ unsigned long mutscan_miss(MutScan *m,  ResultSet *r){
     for(j=0;j<gt_array_size(mrna_child_arr);j++){
       MutGene *mrna_child_elem = gt_array_get(mrna_child_arr, j);
       
-      if(strcmp(gt_str_get(mutgene_get_type(mrna_child_elem)),"CDS") == 0) {      
+      if(strcmp(gt_str_get(mutgene_get_type(mrna_child_elem)),"CDS") == 0) {
         gt_encseq_reader_reinit_with_readmode(read,m->encseq,0,gt_encseq_seqstartpos(m->encseq,m->file_chromosome) + mutgene_get_rng_start(mrna_child_elem)-1);
         
         if(resultset_get_var_pos(r) < mutgene_get_rng_end(mrna_child_elem) && resultset_get_var_pos(r) > mutgene_get_rng_start(mrna_child_elem)) {

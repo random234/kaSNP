@@ -36,6 +36,7 @@ int read_input(const char * gff_file, const char *vcf_file_input, const char *en
   gt_tokenizer_delete(vcf_token);
   gt_error_delete(err);  
   gt_str_delete(encseq_file);
+  //~ gt_node_visitor_delete(gff3vis);
   
   //~ gt_io_delete(vcf_io);  
   

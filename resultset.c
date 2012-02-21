@@ -22,10 +22,13 @@ struct ResultSet{
   GtStr *gene_name;
   GtStr *id;
   
-  /* in_exon results */
+    /* in_exon results */
   unsigned long exon;
   GtStrArray *mrna_ids;
-    
+  
+  /* in_intron results */
+  unsigned long intron;
+  
   /* frame shift results */
   unsigned long frms;
   /* missense nonssense results */
@@ -44,6 +47,7 @@ ResultSet* resultset_new(void) {
   r->miss = 0;
   r->nons = 0;
   r->exon = 0;
+  r->intron = 0;
   return r;
 }
 
@@ -87,6 +91,16 @@ unsigned long resultset_get_exon(ResultSet *r) {
   return r->exon;
 }
 
+void resultset_set_intron(ResultSet *r, unsigned long i) {
+  gt_assert(r);
+  r->intron = i;
+}
+
+unsigned long resultset_get_intron(ResultSet *r) {
+  gt_assert(r);
+  return r->intron;
+}
+
 void resultset_set_gene_name(ResultSet *r, GtStr *gn) {
   gt_assert(r);
   r->gene_name = gn;
@@ -99,6 +113,7 @@ GtStr * resultset_get_gene_name(ResultSet *r) {
 
 void resultset_add_mrna_id(ResultSet *r, GtStr *mi) {
   gt_assert(r);
+  gt_assert(mi);
   gt_str_array_add(r->mrna_ids, mi);
   //~ gt_str_array_add(r->mrna_ids, mi);
 }

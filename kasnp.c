@@ -24,5 +24,10 @@ int main(int argc, char **argv) {
 
         read_input(gff3_file, vcf_file, encseq_file, out_file, splice_site_range);
 	}
-    return 0;
+    
+  //~ gt_free((void *) gff3_file);
+  //~ gt_free((void *) encseq_file);
+  //~ gt_free((void *) vcf_file);
+  //~ gt_free((void *) out_file);
+  return 0;
 }

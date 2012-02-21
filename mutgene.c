@@ -40,38 +40,32 @@ MutGene* mutgene_new(void) {
 
 GtStr* mutgene_get_id(MutGene *g) {
   gt_assert(g);
-  return g->id;  
+  return g->id;
 }
 
-void mutgene_set_id(MutGene *g, const char *i) {
+void mutgene_set_id(MutGene *g, GtStr *i) {
   gt_assert(g);
-  if(i != NULL) {
-    gt_str_append_cstr(g->id,i);  
-  }
+  g->id = i;
 }
 
 GtStr* mutgene_get_gene_name(MutGene *g) {
   gt_assert(g);
-  return g->gene_name;  
+  return g->gene_name;
 }
 
-void mutgene_set_gene_name(MutGene *g, const char *gn) {
+void mutgene_set_gene_name(MutGene *g, GtStr *gn) {
   gt_assert(g);
-  if(gn != NULL) {
-    gt_str_append_cstr(g->gene_name,gn);
-  }
+  g->gene_name = gn;
 }
 
 GtStr* mutgene_get_type(MutGene *g) {
   gt_assert(g);
-  return g->type;  
+  return g->type;
 }
 
-void mutgene_set_type(MutGene *g, const char *t) {
+void mutgene_set_type(MutGene *g, GtStr *t) {
   gt_assert(g);
-  if(t != NULL) {
-    gt_str_append_cstr(g->type,t);
-  }
+  g->type = t;
 }
 
 unsigned long mutgene_get_rng_start(MutGene *g) {
@@ -127,13 +121,13 @@ void mutgene_add_child(MutGene *g, MutGene *child) {
   //~ printf("%lu",g->child_size);
 }
 
-void mutgene_add_content(MutGene *g, const char *i, const char *gn, const char *t, unsigned long rs, unsigned long re, unsigned long p) {
+void mutgene_add_content(MutGene *g, GtStr *i, GtStr *gn, GtStr *t, unsigned long rs, unsigned long re, unsigned long p) {
   mutgene_set_id(g,i);
   mutgene_set_gene_name(g,gn);
   mutgene_set_type(g,t);
   mutgene_set_rng_start(g,rs);
   mutgene_set_rng_end(g,re);
-  mutgene_set_phase(g,p);  
+  mutgene_set_phase(g,p);
 }
 
 
@@ -142,26 +136,28 @@ void mutgene_reset(MutGene *g) {
 }
 
 void mutgene_delete(MutGene *g) {
-  unsigned long i,j = 0;  
+  //~ unsigned long i,j = 0;  
   
-  
-  for(i=0;i<gt_array_size(g->children);i++){
-    MutGene *mrna_elem = gt_array_get(g->children, i);
-    GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
-    for(j=0;j<gt_array_size(mrna_child_arr);j++) {
-      MutGene *mrna_child = gt_array_get(mrna_child_arr, j);            
-      mutgene_delete_elememt(mrna_child);
-    }    
-    mutgene_delete_elememt(mrna_elem);
-  }
-  
+  //~ if(g->children != NULL) {
+    //~ for(i=0;i<gt_array_size(g->children);i++){
+      //~ MutGene *mrna_elem = gt_array_get(g->children, i);
+      //~ GtArray *mrna_child_arr = mutgene_get_children_array(mrna_elem);
+      //~ if(gt_array_size(mrna_child_arr) != 0) {
+        //~ for(j=0;j<gt_array_size(mrna_child_arr);j++) {
+          //~ MutGene *mrna_child = gt_array_get(mrna_child_arr, j);            
+          //~ mutgene_delete_elememt(mrna_child);
+        //~ }    
+      //~ }      
+    //~ mutgene_delete_elememt(mrna_elem);
+    //~ }
+  //~ }
   gt_str_delete(g->id);  
   gt_str_delete(g->gene_name);
   gt_str_delete(g->type);
   //~ gt_free(g->id);
   //~ gt_free(g->gene_name);
   //~ gt_free(g->type);
-  gt_array_delete(g->children);
+  //~ gt_array_delete(g->children);
   gt_free(g);
 }
 
@@ -173,6 +169,6 @@ void mutgene_delete_elememt(MutGene *g) {
   gt_str_delete(g->id);  
   gt_str_delete(g->gene_name);
   gt_str_delete(g->type);
-  gt_array_delete(g->children);  
+  //~ gt_array_delete(g->children);  
   gt_free(g);
 }

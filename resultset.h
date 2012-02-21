@@ -21,6 +21,10 @@ void resultset_set_exon(ResultSet *, unsigned long);
 
 unsigned long resultset_get_exon(ResultSet *);
 
+void resultset_set_intron(ResultSet *, unsigned long );
+
+unsigned long resultset_get_intron(ResultSet *);
+
 void resultset_set_gene_name(ResultSet *, GtStr *);
 
 GtStr * resultset_get_gene_name(ResultSet *);
