@@ -48,6 +48,12 @@ void vcfoutput_write(VcfOutput *v, ResultSet *r) {
       if(resultset_get_nons(r) != 0) {
         gt_str_append_cstr(temp,"NSN;");
       }      
+      if(resultset_get_threeprime(r) != 0) {
+        gt_str_append_cstr(temp,"ASS;");
+      }
+      if(resultset_get_fiveprime(r) != 0) {
+        gt_str_append_cstr(temp,"DSS;");
+      }
     }
     gt_str_append_cstr(temp,"\t");
     gt_file_xwrite(v->file,gt_str_get(temp),gt_str_length(temp));    

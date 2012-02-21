@@ -22,13 +22,10 @@ struct ResultSet{
   GtStr *gene_name;
   GtStr *id;
   
-    /* in_exon results */
+  /* in_exon results */
   unsigned long exon;
   GtStrArray *mrna_ids;
-  
-  /* in_intron results */
-  unsigned long intron;
-  
+    
   /* frame shift results */
   unsigned long frms;
   /* missense nonssense results */
@@ -36,6 +33,12 @@ struct ResultSet{
   unsigned long miss;
   unsigned long nons;
   char amino;
+  
+  /* splice site */
+  unsigned long threeprime;
+  unsigned long fiveprime;
+  
+  
 };
 
 ResultSet* resultset_new(void) {
@@ -46,8 +49,8 @@ ResultSet* resultset_new(void) {
   r->frms = 0;
   r->miss = 0;
   r->nons = 0;
-  r->exon = 0;
-  r->intron = 0;
+  r->threeprime = 0;
+  r->fiveprime = 0;
   return r;
 }
 
@@ -71,6 +74,27 @@ unsigned long resultset_get_var_pos(ResultSet *r) {
   return r->var_pos;
 }
 
+void resultset_set_threeprime(ResultSet *r, unsigned long t) {
+  gt_assert(r);
+  r->threeprime = t;
+}
+
+unsigned long resultset_get_threeprime(ResultSet *r) {
+  gt_assert(r);
+  return r->threeprime;
+}
+
+void resultset_set_fiveprime(ResultSet *r, unsigned long t) {
+  gt_assert(r);
+  r->fiveprime = t;
+}
+
+unsigned long resultset_get_fiveprime(ResultSet *r) {
+  gt_assert(r);
+  return r->fiveprime;
+}
+
+
 void resultset_set_id(ResultSet *r, GtStr *i) {
   gt_assert(r);
   r->id = i;
@@ -91,16 +115,6 @@ unsigned long resultset_get_exon(ResultSet *r) {
   return r->exon;
 }
 
-void resultset_set_intron(ResultSet *r, unsigned long i) {
-  gt_assert(r);
-  r->intron = i;
-}
-
-unsigned long resultset_get_intron(ResultSet *r) {
-  gt_assert(r);
-  return r->intron;
-}
-
 void resultset_set_gene_name(ResultSet *r, GtStr *gn) {
   gt_assert(r);
   r->gene_name = gn;
@@ -113,7 +127,6 @@ GtStr * resultset_get_gene_name(ResultSet *r) {
 
 void resultset_add_mrna_id(ResultSet *r, GtStr *mi) {
   gt_assert(r);
-  gt_assert(mi);
   gt_str_array_add(r->mrna_ids, mi);
   //~ gt_str_array_add(r->mrna_ids, mi);
 }
@@ -173,26 +186,4 @@ void resultset_set_nons(ResultSet *r, unsigned long i) {
 unsigned long resultset_get_nons(ResultSet *r) {
   gt_assert(r);
   return r->miss;
-}
-
-void resultset_reset(ResultSet *r){
-  gt_assert(r);  
-  gt_str_array_reset(r->vcf_arr);
-  gt_str_array_reset(r->mrna_ids);
-  gt_str_array_reset(r->dna_seqs);
-  r->frms = 0;
-  r->miss = 0;
-  r->nons = 0;
-  r->exon = 0;  
-}
-
-void resultset_delete(ResultSet *r) {
-  gt_assert(r);  
-  //~ gt_str_array_delete(r->vcf_arr);
-  //~ gt_str_array_delete(r->mrna_ids);
-  //~ gt_str_array_delete(r->dna_seqs);
-  //gt_free(r->vcf_arr);
-  //~ gt_free(r->mrna_ids);
-  //~ gt_free(r->dna_seqs);
- // gt_free(r);
 }

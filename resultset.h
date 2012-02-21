@@ -13,6 +13,14 @@ void resultset_set_var_pos(ResultSet *, unsigned long );
 
 unsigned long resultset_get_var_pos(ResultSet *);
 
+void resultset_set_threeprime(ResultSet *, unsigned long );
+
+unsigned long resultset_get_threeprime(ResultSet *); 
+
+void resultset_set_fiveprime(ResultSet *, unsigned long ); 
+
+unsigned long resultset_get_fiveprime(ResultSet *);
+
 void resultset_set_id(ResultSet *, GtStr *);
 
 GtStr * resultset_get_id(ResultSet *);
@@ -20,10 +28,6 @@ GtStr * resultset_get_id(ResultSet *);
 void resultset_set_exon(ResultSet *, unsigned long);
 
 unsigned long resultset_get_exon(ResultSet *);
-
-void resultset_set_intron(ResultSet *, unsigned long );
-
-unsigned long resultset_get_intron(ResultSet *);
 
 void resultset_set_gene_name(ResultSet *, GtStr *);
 
@@ -51,7 +55,4 @@ void resultset_set_nons(ResultSet *, unsigned long);
 
 unsigned long resultset_get_nons(ResultSet *);
 
-void resultset_reset(ResultSet *);
-
-void resultset_delete(ResultSet *);
 #endif

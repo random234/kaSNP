@@ -168,13 +168,11 @@ static int gt_gff3_vis_feature_node(GtNodeVisitor *nv,
   }
   gt_feature_node_iterator_delete(fni);
   gt_str_delete(line);
-  gt_str_delete(temp);
   gt_str_array_delete(vcf_arr);
-  gt_str_array_delete(desc_arr);
   gt_splitter_delete(vcf_split);
   gt_splitter_delete(desc_split);
-  mutscan_delete(mut);  
-  return had_err; 
+  mutscan_delete(mut);
+  return had_err;
 }
 
 unsigned long get_description_file_number(GtStrArray *desc, GtStr *seqid) {
@@ -192,12 +190,9 @@ unsigned long get_description_file_number(GtStrArray *desc, GtStr *seqid) {
 
 void gt_gff3_vis_free(GtNodeVisitor *nv)
 {
-  //printf("free\n");
   GtGff3Vis *v;
   if (!nv) return;
   v = gt_gff3_vis_cast(nv);
-  gt_encseq_loader_delete(v->encseq_load);
-  gt_encseq_delete(v->encseq); 
   vcfoutput_delete(v->vcf_out);
   //gt_str_array_delete(v->sa);
   //~ gt_str_delete(v->fas_file);
@@ -232,7 +227,6 @@ GtNodeVisitor* gt_gff3_feat_vis_new(GtTokenizer *vcf_token, GtStr *encseq_file, 
   mfv->encseq_load = gt_encseq_loader_new();
   mfv->encseq = gt_encseq_loader_load(mfv->encseq_load,gt_str_get(encseq_file), err);
   mfv->splice_site_range = splice_site_range;
-  gt_error_delete(err);
   return nv;
 }
 
